@@ -24,4 +24,10 @@ describe "User" do
   it "should be tenacious" do
     expect("tenacious").to eq("tenacious")
   end
+
+  (1..5).each do |i|
+    it "has a flaky test" do
+      expect(i % 5).to_not eq(0)
+    end
+  end
 end
