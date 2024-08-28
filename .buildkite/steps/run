@@ -4,10 +4,6 @@ set -e
 
 buildkite-agent artifact download skipped.json .
 
-# We set BUILDKITE_SPLITTER_IDENTIFIER to ensure that the Buildkite 
-# uniquely caches each splitting step, i.e. 1 test plan for the unit tests
-# and 1 test plan for the acceptance tests.
-export BUILDKITE_SPLITTER_IDENTIFIER="${BUILDKITE_BUILD_ID}_${BUILDKITE_STEP_ID}"
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_SPLITTER_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 export BUILDKITE_ORGANIZATION_SLUG="jimjams"
@@ -31,5 +27,5 @@ docker run \
   --env BUILDKITE_PARALLEL_JOB \
   --env BUILDKITE_PARALLEL_JOB_COUNT \
   --env BUILDKITE_SPLITTER_TEST_FILE_PATTERN \
-  --env BUILDKITE_SPLITTER_IDENTIFIER \
+  --env BUILDKITE_SPLITTER_STEP_ID \
   -it --rm app sh -c "test-splitter"
