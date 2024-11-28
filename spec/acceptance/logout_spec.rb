@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe "Logout" do
   it "Logs out successfully from the homepage." do
-    base_sleep_duration = rand(10..30)
+    base_sleep_duration = rand(5..10)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
@@ -64,7 +64,7 @@ describe "Logout" do
     expect(true).to eq(true)
   end
 
-  it "Ensures "Remember Me" does not persist after logging out." do
+  it "Ensures 'Remember Me' does not persist after logging out." do
     base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)

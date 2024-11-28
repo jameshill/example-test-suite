@@ -71,7 +71,7 @@ describe "Product Search flow", type: :feature do
     expect(true).to eq(true)
   end
 
-  it "Displays a "no results found" message when applicable." do
+  it "Displays a 'no results found' message when applicable." do
     base_sleep_duration = rand(5..10)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
