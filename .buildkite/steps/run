@@ -2,8 +2,6 @@
 
 set -e
 
-buildkite-agent artifact download skipped.json .
-
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_SPLITTER_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 export BUILDKITE_ORGANIZATION_SLUG="test-analytics-sandbox"
