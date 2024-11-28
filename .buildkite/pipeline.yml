@@ -16,7 +16,7 @@ steps:
     env:
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/models/**/*_spec.rb"
 
-  - label: "Feature Specs"
+  - label: ":chromium: Feature Specs"
     command: .buildkite/steps/feature-tests.sh
     key: acceptance
     agents:
