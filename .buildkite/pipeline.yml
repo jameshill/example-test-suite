@@ -21,7 +21,7 @@ steps:
     key: acceptance
     agents:
       queue: "default"
-    parallelism: 2
+    parallelism: 10
     env:
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
 
