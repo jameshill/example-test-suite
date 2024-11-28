@@ -1,6 +1,7 @@
 require 'yaml'
 require 'json'
 require "buildkite/test_collector"
+require "active_support"
 
 Buildkite::TestCollector.configure(
   hook: :rspec,
