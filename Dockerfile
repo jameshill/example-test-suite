@@ -6,8 +6,8 @@ RUN apk add --no-cache \
     git \
     curl
 
-# test-splitter
-COPY --from=buildkite/test-splitter:v0.8.1 /usr/local/bin/test-splitter /usr/local/bin/test-splitter
+# test-engine-client
+COPY --from=buildkite/test-engine-client:v1.2.0 /usr/local/bin/bktec /usr/local/bin/bktec
 
 # Set working directory
 WORKDIR /app
