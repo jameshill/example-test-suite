@@ -1,4 +1,6 @@
-RSpec.describe "User Registration", type: :feature do
+require "spec_helper"
+
+describe "User Registration", type: :feature do
   it "is a placeholder test" do
     base_sleep_duration = rand(3..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
