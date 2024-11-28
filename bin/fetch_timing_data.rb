@@ -8,7 +8,7 @@ require 'csv'
 spec_files = Dir["spec/**/*.rb"]
 
 # Define the URL and Bearer token
-url = "https://api.buildkite.com/v2/analytics/organizations/test-analytics-sandbox/suites/rspec-example/test_files"
+url = "https://api.buildkite.com/v2/analytics/organizations/test-engine-sandbox/suites/rspec-3/test_files"
 bearer_token = ENV["API_ACCESS_TOKEN"]
 
 if bearer_token.nil?
@@ -47,6 +47,6 @@ File.open("annotation.md", 'w') do |file|
   file.puts("|-|-|")
 
   timings.each do |key, value|
-    file.puts("|[#{key}](https://buildkite.com/organizations/test-analytics-sandbox/analytics/suites/rspec-example/tests?branch=all+branches&period=7days&query=#{key})|#{value}|")
+    file.puts("|[#{key}](https://buildkite.com/organizations/test-analytics-sandbox/analytics/suites/rspec-3/tests?branch=all+branches&period=7days&query=#{key})|#{value}|")
   end
 end
