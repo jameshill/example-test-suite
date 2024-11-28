@@ -9,7 +9,7 @@ describe "Flaky Spec" do
     Buildkite::TestCollector.annotate('Aggregation Commencing')
 
     ActiveSupport::Notifications.instrument "sql.active_record", { sql: "SELECT complex_aggregation FROM thehumanfund" } do
-      sleep final_sleep_duration.round(3)
+      sleep(3)
     end
 
     Buildkite::TestCollector.annotate('Aggregation Complete')
