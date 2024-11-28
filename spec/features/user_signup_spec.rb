@@ -1,8 +1,6 @@
 require "spec_helper"
 
 describe "User Signup flow", type: :feature do
-
-
   it "Successfully registers a new user with valid details." do
     base_sleep_duration = rand(5..10)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
