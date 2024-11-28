@@ -14,7 +14,7 @@ steps:
       queue: "default"
     parallelism: 2
     env:
-      BUILDKITE_SPLITTER_TEST_FILE_PATTERN: "spec/unit/**/*_spec.rb"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/unit/**/*_spec.rb"
 
   - label: "Acceptance"
     command: .buildkite/steps/test.sh
@@ -23,7 +23,7 @@ steps:
       queue: "default"
     parallelism: 2
     env:
-      BUILDKITE_SPLITTER_TEST_FILE_PATTERN: "spec/acceptance/**/*_spec.rb"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/acceptance/**/*_spec.rb"
 
   - label: "Everything Else"
     command: .buildkite/steps/test.sh
@@ -32,7 +32,7 @@ steps:
       queue: "default"
     parallelism: 2
     env:
-      BUILDKITE_SPLITTER_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,unit}/**/*_spec.rb"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,unit}/**/*_spec.rb"
 
   - label: "Update Test Ownership?"
     branches: "main"
