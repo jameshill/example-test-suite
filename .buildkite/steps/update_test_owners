@@ -2,8 +2,14 @@
 
 set -e
 
-export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
+export SUITE_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 
 curl --location 'https://analytics-api.buildkite.com/v1/test-ownerships' \
-     --header "Authorization: Bearer ${BUILDKITE_ANALYTICS_TOKEN}" \
+     --header "Authorization: Bearer ${SUITE_TOKEN}" \
+     -F 'file=@./TESTOWNERS'
+
+export FEATURE_SUITE_TOKEN=$(buildkite-agent secret get FEATURE_SUITE_TOKEN)
+
+curl --location 'https://analytics-api.buildkite.com/v1/test-ownerships' \
+     --header "Authorization: Bearer ${FEATURE_SUITE_TOKEN}" \
      -F 'file=@./TESTOWNERS'
