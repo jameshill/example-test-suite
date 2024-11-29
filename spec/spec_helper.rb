@@ -3,32 +3,19 @@ require 'json'
 require "buildkite/test_collector"
 require "active_support"
 
-execution_tags = {}
-metadata_json = ENV['INSTANCE_METADATA_JSON']
-
-# Check if the variable exists and parse it
-if metadata_json.nil? || metadata_json.empty?
-  puts "Environment variable INSTANCE_METADATA_JSON is not set or empty."
-else
-  begin
-    # Parse the JSON string into a Ruby hash
-    metadata = JSON.parse(metadata_json)
-
-    # Access metadata as a hash
-    puts "Parsed Metadata:"
-    puts metadata
-
-    execution_tags = {
-      arch: metadata["architecture"],
-      region: metadata["region"],
-      instance_type: metadata["instanceType"]
-    }
-  rescue JSON::ParserError => e
-    puts "Failed to parse JSON: #{e.message}"
-  end
+def get_aws_execution_tags
+  Aws::EC2Metadata.new(retries: 0, http_open_timeout: 0.01, http_read_timeout: 0.01)
+    .get("/latest/dynamic/instance-identity/document")
+    .then { JSON.parse(_1) }
+    .then do |doc|
+      {
+        arch: doc["architecture"],
+        region: doc["region"],
+        instance_type: doc["instanceType"]
+      }
+    end
+rescue
 end
-
-puts execution_tags
 
 Buildkite::TestCollector.configure(
   hook: :rspec,
@@ -37,7 +24,7 @@ Buildkite::TestCollector.configure(
   env: {
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
-    execution_tags: execution_tags
+    execution_tags: get_aws_execution_tags
   },
 )
 
