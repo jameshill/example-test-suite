@@ -5,7 +5,33 @@ describe "Add To Cart flow", type: :feature do
     base_sleep_duration = rand(1..3)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
+
+    Buildkite::TestCollector.annotate('Aggregation Commencing')
+
+    ActiveSupport::Notifications.instrument "sql.active_record", { sql: "SELECT complex_aggregation FROM thehumanfund" } do
+      sleep final_sleep_duration.round(3)
+    end
+
+    Buildkite::TestCollector.annotate('Aggregation Complete')
+    Buildkite::TestCollector.annotate('Snooze Round')
+
+    ActiveSupport::Notifications.instrument "sql.active_record", { sql: "SELECT faster_query FROM thehumanfund" } do
+      sleep(1)
+    end
+
+    Buildkite::TestCollector.annotate('Snoozing Complete')
+
+    ActiveSupport::Notifications.instrument "sql.active_record", { sql: "SELECT fastest_query FROM thehumanfund" } do
+      sleep(0.5)
+    end
+
+    Buildkite::TestCollector.annotate('Trace Completed')
+
+    if rand < 0.15
+      expect(true).to eq(false), "items not added to cart"
+    else
+      expect(true).to eq(true), "checkout complete"
+    end
   end
 
   it "can remove items from cart" do
