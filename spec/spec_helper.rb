@@ -3,29 +3,23 @@ require 'json'
 require "buildkite/test_collector"
 require "active_support"
 
-# Load the JSON from the environment variable
-metadata_json = ENV['INSTANCE_METADATA_JSON']
+begin
+  fetch_script_path = "./bin/fetch_metadata.rb"
+  metadata_json = `ruby #{fetch_script_path}`
+  # Parse the JSON output into a Ruby hash
+  metadata = JSON.parse(metadata_json)
 
-# Check if the variable exists and parse it
-if metadata_json.nil? || metadata_json.empty?
-  puts "Environment variable INSTANCE_METADATA_JSON is not set or empty."
-else
-  begin
-    # Parse the JSON string into a Ruby hash
-    metadata = JSON.parse(metadata_json)
+  # Access metadata as a hash
+  puts "Parsed Metadata:"
+  puts metadata
 
-    # Access metadata as a hash
-    puts "Parsed Metadata:"
-    puts metadata
-
-    # Example: Access specific keys
-    puts "Instance Type: #{metadata['instance-type']}"
-    puts "Instance ID: #{metadata['instance-id']}"
-    puts "Instance Lifecycle: #{metadata['instance-life-cycle']}"
-    puts "Instance AZ: #{metadata['availability-zone']}"
-  rescue JSON::ParserError => e
-    puts "Failed to parse JSON: #{e.message}"
-  end
+  # Example: Access specific keys
+  puts "Instance Type: #{metadata['instance-type']}"
+  puts "Instance ID: #{metadata['instance-id']}"
+  puts "Instance Lifecycle: #{metadata['instance-life-cycle']}"
+  puts "Instance AZ: #{metadata['availability-zone']}"
+rescue JSON::ParserError => e
+  puts "Failed to parse JSON: #{e.message}"
 end
 
 Buildkite::TestCollector.configure(
