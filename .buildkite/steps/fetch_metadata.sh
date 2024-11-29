@@ -6,7 +6,6 @@ BASE_URL="http://169.254.169.254/latest/meta-data"
 # Function to recursively fetch metadata and build JSON
 fetch_metadata() {
   local path=$1
-  local prefix=$2
   local output=""
 
   # Fetch metadata at this path
@@ -18,11 +17,11 @@ fetch_metadata() {
       # Recursively fetch nested metadata
       local sub_key="${line%/}" # Remove trailing slash
       local sub_path="${path}${sub_key}/"
-      local sub_output=$(fetch_metadata "${sub_path}" "${prefix}${sub_key}/")
+      local sub_output=$(fetch_metadata "${sub_path}")
       output="${output}\"${sub_key}\": ${sub_output},"
     else
       # It's a key-value pair
-      local value=$(curl -s "${BASE_URL}/${path}${line}")
+      local value=$(curl -s "${BASE_URL}/${path}${line}" | sed -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g')
       output="${output}\"${line}\": \"${value}\","
     fi
   done <<<"$data"
@@ -35,5 +34,5 @@ fetch_metadata() {
   fi
 }
 
-# Start building JSON from the root path
-echo "$(fetch_metadata "")" | jq .
+# Start building JSON from the root path and escape control characters
+fetch_metadata "" | sed -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g' | jq .
