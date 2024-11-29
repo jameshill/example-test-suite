@@ -37,8 +37,8 @@ Buildkite::TestCollector.configure(
   env: {
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
+    execution_tags: execution_tags
   },
-  execution_tags: execution_tags
 )
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
