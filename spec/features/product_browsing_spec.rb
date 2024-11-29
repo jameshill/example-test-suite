@@ -106,7 +106,7 @@ describe "Product Browsing", type: :feature do
     expect(true).to eq(true)
   end
 
-  it "Displays "Add to Cart" buttons on product listings for quick actions." do
+  it "Displays 'Add to Cart' buttons on product listings for quick actions." do
     base_sleep_duration = rand(1..2)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
