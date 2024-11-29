@@ -5,18 +5,6 @@ set -e
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 
-
-# Call the Ruby script and capture the JSON output
-METADATA_JSON=$(ruby fetch_metadata.rb)
-
-# Export the JSON as an environment variable
-export INSTANCE_METADATA_JSON="$METADATA_JSON"
-
-# Verify the environment variable is set
-echo "Metadata JSON has been set as an environment variable:"
-echo "$INSTANCE_METADATA_JSON"
-
-
 export BUILDKITE_ORGANIZATION_SLUG="test-engine-sandbox"
 export BUILDKITE_TEST_ENGINE_SUITE_SLUG="rspec-3"
 export BUILDKITE_TEST_ENGINE_TEST_CMD="bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
@@ -50,6 +38,5 @@ docker run \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_RETRY_COUNT \
-  --env INSTANCE_METADATA_JSON \
   --env FLAKY_MODE \
   -it --rm app sh -c "bktec"
