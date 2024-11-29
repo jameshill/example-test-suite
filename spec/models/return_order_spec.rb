@@ -1,8 +1,43 @@
 require "spec_helper"
 
-describe "Cart", type: :model do
+describe "ReturnOrder", type: :model do
+  describe "#order_id" do
+    it "should return the order_id" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#user_id" do
+    it "should return the user_id" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#cart_id" do
+    it "should return the cart_id" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#order_status" do
+    it "should return the order_status" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
   describe "#items" do
     it "should return the items" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#item_id" do
+    it "should return the item_id" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -31,6 +66,13 @@ describe "Cart", type: :model do
 
   describe "#subtotal" do
     it "should return the subtotal" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#variant_id" do
+    it "should return the variant_id" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -134,8 +176,64 @@ describe "Cart", type: :model do
     end
   end
 
-  describe "#shipping_method" do
-    it "should return the shipping_method" do
+  describe "#billing_address" do
+    it "should return the billing_address" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#billing_street_address" do
+    it "should return the billing_street_address" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#billing_city" do
+    it "should return the billing_city" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#billing_state" do
+    it "should return the billing_state" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#billing_zip_code" do
+    it "should return the billing_zip_code" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#billing_country" do
+    it "should return the billing_country" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#payment_method" do
+    it "should return the payment_method" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#payment_status" do
+    it "should return the payment_status" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#transaction_id" do
+    it "should return the transaction_id" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -155,29 +253,29 @@ describe "Cart", type: :model do
     end
   end
 
-  describe "#expires_at" do
-    it "should return the expires_at" do
+  describe "#fulfilled_at" do
+    it "should return the fulfilled_at" do
       sleep 0.1
       expect(true).to eq(true)
     end
   end
 
-  describe "#status" do
-    it "should return the status" do
+  describe "#shipped_at" do
+    it "should return the shipped_at" do
       sleep 0.1
       expect(true).to eq(true)
     end
   end
 
-  describe "#currency" do
-    it "should return the currency" do
+  describe "#delivered_at" do
+    it "should return the delivered_at" do
       sleep 0.1
       expect(true).to eq(true)
     end
   end
 
-  describe "#is_guest" do
-    it "should return the is_guest" do
+  describe "#cancelled_at" do
+    it "should return the cancelled_at" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -185,6 +283,13 @@ describe "Cart", type: :model do
 
   describe "#notes" do
     it "should return the notes" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
+  end
+
+  describe "#currency" do
+    it "should return the currency" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -211,15 +316,8 @@ describe "Cart", type: :model do
     end
   end
 
-  describe "#saved_for_later_items" do
-    it "should return the saved_for_later_items" do
-      sleep 0.1
-      expect(true).to eq(true)
-    end
-  end
-
-  describe "#recommendations" do
-    it "should return the recommendations" do
+  describe "#affiliate_id" do
+    it "should return the affiliate_id" do
       sleep 0.1
       expect(true).to eq(true)
     end
@@ -232,80 +330,31 @@ describe "Cart", type: :model do
     end
   end
 
-  describe "#checkout_url" do
-    it "should return the checkout_url" do
+  describe "#tracking_number" do
+    it "should return the tracking_number" do
       sleep 0.1
       expect(true).to eq(true)
     end
   end
 
-  describe "#tax_exempt" do
-    it "should return the tax_exempt" do
+  describe "#shipping_provider" do
+    it "should return the shipping_provider" do
       sleep 0.1
       expect(true).to eq(true)
     end
   end
 
-  it "can add items to it" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
+  describe "#refund_status" do
+    it "should return the refund_status" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
   end
 
-  it "can remove items from cart" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "updates the quantity of a product in the cart successfully" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "empties the cart successfully" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "calculates the total price of the cart accurately" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "validates cart contents before checkout" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "processes the cart checkout successfully  " do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "ensures cart integrates with the inventory system " do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
-  end
-
-  it "handles errors during cart operations gracefully" do
-    base_sleep_duration = 0.1
-    final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
-    sleep final_sleep_duration.round(3)
-    expect(true).to eq(true)
+  describe "#refund_amount" do
+    it "should return the refund_amount" do
+      sleep 0.1
+      expect(true).to eq(true)
+    end
   end
 end
