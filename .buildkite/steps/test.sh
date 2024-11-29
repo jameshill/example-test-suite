@@ -5,18 +5,17 @@ set -e
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 
-# Path to the metadata fetching script
-METADATA_SCRIPT="./.buildkite/steps/fetch_metadata.sh"
 
-# Call the metadata script and store the output in a variable
-METADATA_JSON=$($METADATA_SCRIPT)
+# Call the Ruby script and capture the JSON output
+METADATA_JSON=$(ruby fetch_metadata.rb)
 
 # Export the JSON as an environment variable
 export INSTANCE_METADATA_JSON="$METADATA_JSON"
 
-# Print the variable to verify
-echo "Metadata JSON stored in environment variable:"
+# Verify the environment variable is set
+echo "Metadata JSON has been set as an environment variable:"
 echo "$INSTANCE_METADATA_JSON"
+
 
 export BUILDKITE_ORGANIZATION_SLUG="test-engine-sandbox"
 export BUILDKITE_TEST_ENGINE_SUITE_SLUG="rspec-3"
