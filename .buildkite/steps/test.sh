@@ -5,6 +5,21 @@ set -e
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 
+
+
+# Path to the metadata fetching script
+METADATA_SCRIPT="./fetch_metadata.sh"
+
+# Call the metadata script and store the output in a variable
+METADATA_JSON=$($METADATA_SCRIPT)
+
+# Export the JSON as an environment variable
+export INSTANCE_METADATA_JSON="$METADATA_JSON"
+
+# Print the variable to verify
+echo "Metadata JSON stored in environment variable:"
+echo "$INSTANCE_METADATA_JSON"
+
 export BUILDKITE_ORGANIZATION_SLUG="test-engine-sandbox"
 export BUILDKITE_TEST_ENGINE_SUITE_SLUG="rspec-3"
 export BUILDKITE_TEST_ENGINE_TEST_CMD="bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
@@ -12,13 +27,6 @@ export BUILDKITE_TEST_ENGINE_DEBUG_ENABLED="false"
 export BUILDKITE_TEST_ENGINE_RETRY_COUNT=1
 export BUILDKITE_TEST_ENGINE_RESULT_PATH="tmp/result.json"
 export BUILDKITE_TEST_ENGINE_TEST_RUNNER=rspec
-
-
-export INSTANCE_TYPE=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
-export META_DATA=$(curl -s http://169.254.169.254/latest/meta-data/)
-
-echo $INSTANCE_TYPE
-echo $META_DATA
 
 docker build -t app --load .
 
