@@ -5,10 +5,8 @@ set -e
 export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 
-
-
 # Path to the metadata fetching script
-METADATA_SCRIPT="./fetch_metadata.sh"
+METADATA_SCRIPT="./.buildkite/steps/fetch_metadata.sh"
 
 # Call the metadata script and store the output in a variable
 METADATA_JSON=$($METADATA_SCRIPT)
