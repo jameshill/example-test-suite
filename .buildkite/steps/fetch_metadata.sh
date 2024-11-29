@@ -35,4 +35,8 @@ fetch_metadata() {
 }
 
 # Start building JSON from the root path and escape control characters
-fetch_metadata "" | sed -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g' | jq .
+local here = fetch_metadata "" | sed -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g'
+
+echo "$here"
+
+echo "$here" | jq .
