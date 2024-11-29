@@ -12,6 +12,7 @@ export BUILDKITE_TEST_ENGINE_DEBUG_ENABLED="false"
 export BUILDKITE_TEST_ENGINE_RETRY_COUNT=1
 export BUILDKITE_TEST_ENGINE_RESULT_PATH="tmp/result.json"
 export BUILDKITE_TEST_ENGINE_TEST_RUNNER=rspec
+export INSTANCE_METADATA_JSON=$(curl -s "http://169.254.169.254/latest/dynamic/instance-identity/document")
 
 docker build -t app --load .
 
@@ -38,5 +39,6 @@ docker run \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_RETRY_COUNT \
+  --env INSTANCE_METADATA_JSON \
   --env FLAKY_MODE \
   -it --rm app sh -c "bktec"
