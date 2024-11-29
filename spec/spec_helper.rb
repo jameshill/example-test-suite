@@ -16,11 +16,18 @@ else
     # Access metadata as a hash
     puts "Parsed Metadata:"
     puts metadata
-
   rescue JSON::ParserError => e
     puts "Failed to parse JSON: #{e.message}"
   end
 end
+
+execution_tags = {
+  arch: metadata["architecture"],
+  region: metadata["region"],
+  instance_type: metadata["instanceType"]
+}
+
+puts execution_tags
 
 Buildkite::TestCollector.configure(
   hook: :rspec,
@@ -29,7 +36,8 @@ Buildkite::TestCollector.configure(
   env: {
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
-  }
+  },
+  # execution_tags:
 )
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
