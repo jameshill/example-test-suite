@@ -1,142 +1,141 @@
 require "spec_helper"
 
-describe "Order History", type: :feature do
-
-  it "Displays a list of past orders for logged-in users." do
-    base_sleep_duration = rand(1..2)
+describe "Logout" do
+  it "Logs out successfully from the homepage." do
+    base_sleep_duration = rand(5..10)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Shows order details when an order is selected." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out successfully from the user profile page." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Allows filtering orders by date range." do
-    base_sleep_duration = rand(1..2)
+  it "Redirects to the login page after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Displays the total amount for each order in the list." do
-    base_sleep_duration = rand(1..2)
+  it "Invalidates the session after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Shows the status of each order (e.g., shipped, delivered, pending)." do
-    base_sleep_duration = rand(1..2)
+  it "Prevents access to protected pages after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Provides tracking information for shipped orders." do
-    base_sleep_duration = rand(1..2)
+  it "Displays a confirmation message after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Allows downloading invoices for past orders." do
-    base_sleep_duration = rand(1..2)
+  it "Fails to log out if the server is unavailable." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Displays a message when there are no past orders." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out successfully even with multiple active sessions." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Handles pagination for a large number of orders." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out automatically after inactivity." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Allows searching for orders by order ID." do
-    base_sleep_duration = rand(1..2)
+  it "Ensures 'Remember Me' does not persist after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Displays the payment method used for each order." do
-    base_sleep_duration = rand(1..2)
+  it "Shows a loading indicator during the logout process." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Shows a list of items in each order with their quantities." do
-    base_sleep_duration = rand(1..2)
+  it "Prevents logout if the user cancels the action." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Handles errors gracefully if order data fails to load." do
-    base_sleep_duration = rand(1..2)
+  it "Clears shopping cart data after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Allows reordering items directly from order history." do
-    base_sleep_duration = rand(1..2)
+  it "Clears browser cookies after logging out." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Displays shipping addresses associated with each order." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out successfully from mobile devices." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Supports multiple currencies for international orders." do
-    base_sleep_duration = rand(1..2)
+  it "Redirects to a custom URL specified for logout." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Prevents access to order history for logged-out users." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out successfully when using social media accounts." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Notifies users of any canceled orders in the list." do
-    base_sleep_duration = rand(1..2)
+  it "Fails to log out when the network connection is lost." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Shows estimated delivery dates for pending orders." do
-    base_sleep_duration = rand(1..2)
+  it "Logs out successfully when accessed via multiple browsers." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
   end
 
-  it "Tracks and logs user activity for accessing order history." do
-    base_sleep_duration = rand(1..2)
+  it "Tracks and logs the logout time in user activity logs." do
+    base_sleep_duration = rand(10..30)
     final_sleep_duration = base_sleep_duration * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep final_sleep_duration.round(3)
     expect(true).to eq(true)
