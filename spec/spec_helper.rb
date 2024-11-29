@@ -3,27 +3,24 @@ require 'json'
 require "buildkite/test_collector"
 require "active_support"
 
+metadata_json = ENV['INSTANCE_METADATA_JSON']
 
-begin
-  # Load the JSON from the environment variable
-  metadata_json = ENV['INSTANCE_METADATA_JSON']
+# Check if the variable exists and parse it
+if metadata_json.nil? || metadata_json.empty?
+  puts "Environment variable INSTANCE_METADATA_JSON is not set or empty."
+else
+  begin
+    # Parse the JSON string into a Ruby hash
+    metadata = JSON.parse(metadata_json)
 
-  # Check if the variable exists and parse it
-  if metadata_json.nil? || metadata_json.empty?
-    puts "Environment variable INSTANCE_METADATA_JSON is not set or empty."
+    # Access metadata as a hash
+    puts "Parsed Metadata:"
+    puts metadata
+
+  rescue JSON::ParserError => e
+    puts "Failed to parse JSON: #{e.message}"
   end
-
-  # Parse the JSON string into a Ruby hash
-  metadata = JSON.parse(metadata_json)
-
-  # Access metadata as a hash
-  puts "Parsed Metadata:"
-  puts metadata
-
-rescue JSON::ParserError => e
-  puts "Failed to parse JSON: #{e.message}"
 end
-
 
 Buildkite::TestCollector.configure(
   hook: :rspec,
