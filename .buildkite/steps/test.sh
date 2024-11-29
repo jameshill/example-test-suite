@@ -13,6 +13,13 @@ export BUILDKITE_TEST_ENGINE_RETRY_COUNT=1
 export BUILDKITE_TEST_ENGINE_RESULT_PATH="tmp/result.json"
 export BUILDKITE_TEST_ENGINE_TEST_RUNNER=rspec
 
+
+export INSTANCE_TYPE=$(curl -s http://169.254.169.254/latest/meta-data/instance-type)
+export META_DATA=$(curl -s http://169.254.169.254/latest/meta-data/)
+
+echo $INSTANCE_TYPE
+echo $META_DATA
+
 docker build -t app --load .
 
 echo "+++ bktec"
@@ -40,4 +47,3 @@ docker run \
   --env BUILDKITE_TEST_ENGINE_RETRY_COUNT \
   --env FLAKY_MODE \
   -it --rm app sh -c "bktec"
-
