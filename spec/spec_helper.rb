@@ -3,6 +3,7 @@ require 'json'
 require "buildkite/test_collector"
 require "active_support"
 
+metadata = {}
 metadata_json = ENV['INSTANCE_METADATA_JSON']
 
 # Check if the variable exists and parse it
