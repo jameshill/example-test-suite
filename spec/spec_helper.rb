@@ -2,9 +2,10 @@ require 'yaml'
 require 'json'
 require "buildkite/test_collector"
 require "active_support"
+require "aws-sdk-core"
 
 def get_aws_execution_tags
-  Aws::EC2Metadata.new(retries: 0, http_open_timeout: 0.01, http_read_timeout: 0.01)
+  Aws::EC2Metadata.new(retries: 0, http_open_timeout: 0.1, http_read_timeout: 0.1)
     .get("/latest/dynamic/instance-identity/document")
     .then { JSON.parse(_1) }
     .then do |doc|
@@ -14,7 +15,8 @@ def get_aws_execution_tags
         instance_type: doc["instanceType"]
       }
     end
-rescue
+rescue => e
+  $stderr.puts(e.inspect)
 end
 
 Buildkite::TestCollector.configure(
@@ -25,7 +27,7 @@ Buildkite::TestCollector.configure(
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
     execution_tags: get_aws_execution_tags
-  },
+  }
 )
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
