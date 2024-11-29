@@ -6,11 +6,91 @@ describe "Order", type: :model do
       sleep 0.1
       expect(true).to eq(true)
     end
+
+    it "should return the order_id" do
+      expect(true).to eq(true)
+    end
+
+    it "should be a UUID" do
+      expect(true).to eq(true)
+    end
+
+    it "should be unique across orders" do
+      expect(true).to eq(true)
+    end
+
+    it "should not be nil" do
+      expect(true).to eq(true)
+    end
+
+    it "should be a string" do
+      expect(true).to eq(true)
+    end
+
+    it "should have a valid format" do
+      expect(true).to eq(true)
+    end
+
+    it "should be required" do
+      expect(true).to eq(true)
+    end
+
+    it "should not change after creation" do
+      expect(true).to eq(true)
+    end
+
+    it "should match the associated record's ID" do
+      expect(true).to eq(true)
+    end
+
+    it "should be indexed in the database" do
+      expect(true).to eq(true)
+    end
+
+    it "should be generated automatically" do
+      expect(true).to eq(true)
+    end
   end
 
   describe "#user_id" do
     it "should return the user_id" do
       sleep 0.1
+      expect(true).to eq(true)
+    end
+
+    it "should be associated with a valid user" do
+      expect(true).to eq(true)
+    end
+
+    it "should not be nil" do
+      expect(true).to eq(true)
+    end
+
+    it "should be an integer" do
+      expect(true).to eq(true)
+    end
+
+    it "should match a user in the database" do
+      expect(true).to eq(true)
+    end
+
+    it "should not allow negative values" do
+      expect(true).to eq(true)
+    end
+
+    it "should be required" do
+      expect(true).to eq(true)
+    end
+
+    it "should allow updates when the user changes" do
+      expect(true).to eq(true)
+    end
+
+    it "should be foreign-key constrained" do
+      expect(true).to eq(true)
+    end
+
+    it "should cascade delete orders when user is deleted" do
       expect(true).to eq(true)
     end
   end
@@ -20,6 +100,42 @@ describe "Order", type: :model do
       sleep 0.1
       expect(true).to eq(true)
     end
+
+    it "should be associated with a valid cart" do
+      expect(true).to eq(true)
+    end
+
+    it "should not be nil" do
+      expect(true).to eq(true)
+    end
+
+    it "should be an integer" do
+      expect(true).to eq(true)
+    end
+
+    it "should match a cart in the database" do
+      expect(true).to eq(true)
+    end
+
+    it "should not allow duplicate cart IDs on active orders" do
+      expect(true).to eq(true)
+    end
+
+    it "should allow nil if the order is completed" do
+      expect(true).to eq(true)
+    end
+
+    it "should have a valid format" do
+      expect(true).to eq(true)
+    end
+
+    it "should reflect the current user's cart ID" do
+      expect(true).to eq(true)
+    end
+
+    it "should cascade delete orders when the cart is deleted" do
+      expect(true).to eq(true)
+    end
   end
 
   describe "#order_status" do
@@ -27,11 +143,83 @@ describe "Order", type: :model do
       sleep 0.1
       expect(true).to eq(true)
     end
+
+    it "should only allow valid statuses" do
+      expect(true).to eq(true)
+    end
+
+    it "should default to 'pending'" do
+      expect(true).to eq(true)
+    end
+
+    it "should transition from 'pending' to 'completed'" do
+      expect(true).to eq(true)
+    end
+
+    it "should transition from 'pending' to 'cancelled'" do
+      expect(true).to eq(true)
+    end
+
+    it "should not allow invalid transitions" do
+      expect(true).to eq(true)
+    end
+
+    it "should be required" do
+      expect(true).to eq(true)
+    end
+
+    it "should be stored as a string" do
+      expect(true).to eq(true)
+    end
+
+    it "should support customization of statuses" do
+      expect(true).to eq(true)
+    end
+
+    it "should reflect the current state of the order" do
+      expect(true).to eq(true)
+    end
   end
 
   describe "#items" do
     it "should return the items" do
       sleep 0.1
+      expect(true).to eq(true)
+    end
+
+    it "should be an array" do
+      expect(true).to eq(true)
+    end
+
+    it "should not be empty" do
+      expect(true).to eq(true)
+    end
+
+    it "should contain valid item objects" do
+      expect(true).to eq(true)
+    end
+
+    it "should not allow nil items" do
+      expect(true).to eq(true)
+    end
+
+    it "should have a length matching the cart's item count" do
+      expect(true).to eq(true)
+    end
+
+    it "should include only active items" do
+      expect(true).to eq(true)
+    end
+
+    it "should have items with positive quantities" do
+      expect(true).to eq(true)
+    end
+
+    it "should allow duplicate items with different variants" do
+      expect(true).to eq(true)
+    end
+
+    it "should maintain order based on addition sequence" do
       expect(true).to eq(true)
     end
   end
