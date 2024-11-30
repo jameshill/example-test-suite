@@ -22,4 +22,3 @@ smoke/*                   platform
 *flaky*.rb                iam
 *login_spec.rb            iam
 *logout_spec.rb           iam
-
