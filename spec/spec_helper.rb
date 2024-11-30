@@ -53,7 +53,7 @@ puts "FLAKY_MULTIPLIER = #{FLAKY_MULTIPLIER}"
 def spoof_duration(type: :unit)
   case type
   when :e2e
-    sleep(45 * DURATION_MULTIPLIER)
+    sleep(rand(45..55) * DURATION_MULTIPLIER)
   when :feature
     time = rand(1..3) * rand(90..110)/100.0 * DURATION_MULTIPLIER
     sleep time.round(3)
