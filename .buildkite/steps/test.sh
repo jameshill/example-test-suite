@@ -38,5 +38,6 @@ docker run \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN \
   --env BUILDKITE_TEST_ENGINE_RETRY_COUNT \
+  --env SPOOF_ARM_MODE \
   --env FLAKY_MODE \
   -it --rm app sh -c "bktec"
