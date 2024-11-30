@@ -25,7 +25,7 @@ steps:
     env:
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
 
-  - label: "Everything Else"
+  - label: ":wastebasket: Everything Else"
     command: .buildkite/steps/test.sh
     key: everything_else
     agents:
