@@ -4,9 +4,20 @@
 *org*.rb      iam
 *team*.rb     iam
 *user*.rb     iam
+
+*add_to_cart_spec.rb      growth
+*checkout_process_spec.rb growth
+*order_history_spec.rb    growth
+*product_browsing_spec.rb growth
+*product_search_spec.rb   growth
+*product_search_spec.rb   growth
+*user_signup_spec.rb      growth
+
+
+
+*user*.rb     iam
 *flaky*.rb     iam billing
 
-*checkout*.rb billing
 
 smoke/*       platform
 e2e/*         platform
