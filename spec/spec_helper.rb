@@ -19,6 +19,19 @@ rescue => e
   $stderr.puts(e.inspect)
 end
 
+execution_tags = get_aws_execution_tags || {}
+
+if ENV["SPOOF_ARM_MODE"] == "true"
+  execution_tags[:arch] = "arm64"
+
+  duration_multiplier = 0.85
+  # less flaky
+  flaky_multiplier = 0.6
+else
+  duration_multiplier = 1
+  flaky_multiplier = 1
+end
+
 Buildkite::TestCollector.configure(
   hook: :rspec,
   # url: "http://analytics-api.buildkite.localhost/v1/uploads",
@@ -26,10 +39,13 @@ Buildkite::TestCollector.configure(
   env: {
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
-    execution_tags: get_aws_execution_tags
+    execution_tags: execution_tags
   }
 )
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
-DURATION_MULTIPLIER = 1 + (Time.now.utc.to_i - REFERENCE_TIME)/604800 # should double every 7 days-ish
+DURATION_MULTIPLIER = (1 + (Time.now.utc.to_i - REFERENCE_TIME)/2419200.0) * duration_multiplier
+FLAKY_MULTIPLIER = 1 * flaky_multiplier
+
 puts "DURATION_MULTIPLIER = #{DURATION_MULTIPLIER}"
+puts "FLAKY_MULTIPLIER = #{FLAKY_MULTIPLIER}"
