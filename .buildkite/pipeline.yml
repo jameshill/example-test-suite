@@ -12,7 +12,7 @@ steps:
     key: unit
     agents:
       queue: "default"
-    parallelism: 2
+    parallelism: 5
     env:
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/models/**/*_spec.rb"
 
