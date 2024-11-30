@@ -1,23 +1,25 @@
-*login*.rb    iam
-*logout*.rb   iam
-*password*.rb iam
-*org*.rb      iam
-*team*.rb     iam
-*user*.rb     iam
+*admin_dashboard_spec.rb  platform
+e2e/*                     platform
+smoke/*                   platform
 
 *add_to_cart_spec.rb      growth
 *checkout_process_spec.rb growth
 *order_history_spec.rb    growth
 *product_browsing_spec.rb growth
 *product_search_spec.rb   growth
-*product_search_spec.rb   growth
 *user_signup_spec.rb      growth
+*cart_spec.rb             growth
+*category_spec.rb         growth
+*order_spec.rb            growth
+*return_order_spec.rb     growth
+*product_spec.rb          growth
 
+*change_password_spec.rb  iam
+*team*.rb                 iam
+*user*.rb                 iam
+*org*.rb                  iam
+*workspace*.rb            iam
+*flaky*.rb                iam
+*login_spec.rb            iam
+*logout_spec.rb           iam
 
-
-*user*.rb     iam
-*flaky*.rb     iam billing
-
-
-smoke/*       platform
-e2e/*         platform
