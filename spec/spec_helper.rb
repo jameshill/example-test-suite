@@ -49,3 +49,23 @@ FLAKY_MULTIPLIER = 1 * flaky_multiplier
 
 puts "DURATION_MULTIPLIER = #{DURATION_MULTIPLIER}"
 puts "FLAKY_MULTIPLIER = #{FLAKY_MULTIPLIER}"
+
+def spoof_duration(type: :unit)
+  case type
+  when :e2e
+    sleep(45 * DURATION_MULTIPLIER)
+  when :feature
+    time = rand(1..3) * rand(90..110)/100.0 * DURATION_MULTIPLIER
+    sleep time.round(3)
+  when :slow_feature
+    time = rand(5..10) * rand(90..110)/100.0 * DURATION_MULTIPLIER
+    sleep time.round(3)
+  when :really_slow_feature
+    time = rand(10..30) * rand(90..110)/100.0 * DURATION_MULTIPLIER
+    sleep time.round(3)
+  when :unit
+    sleep(rand(0.1..0.3) * DURATION_MULTIPLIER)
+  else
+    sleep(rand(0.1..0.3) * DURATION_MULTIPLIER)
+  end
+end

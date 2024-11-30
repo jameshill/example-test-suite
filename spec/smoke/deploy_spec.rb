@@ -2,12 +2,12 @@ require "spec_helper"
 
 describe "Deploy" do
   it "should be available" do
-    sleep(22)
+    spoof_duration(type: :e2e)
     expect(2).to eq(2)
   end
 
   it "should accept cash" do
-    sleep(21)
+    spoof_duration(type: :e2e)
     expect(2).to eq(2)
   end
 end
