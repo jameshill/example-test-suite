@@ -9,12 +9,20 @@ export BUILDKITE_ORGANIZATION_SLUG="test-engine-sandbox"
 export BUILDKITE_TEST_ENGINE_SUITE_SLUG="feature-tests"
 export BUILDKITE_TEST_ENGINE_TEST_CMD="bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
 export BUILDKITE_TEST_ENGINE_DEBUG_ENABLED="false"
-export BUILDKITE_TEST_ENGINE_RETRY_COUNT=1
+export BUILDKITE_TEST_ENGINE_RETRY_COUNT=${RETRYCOUNT:-1}
 export BUILDKITE_TEST_ENGINE_RESULT_PATH="tmp/result.json"
 export BUILDKITE_TEST_ENGINE_TEST_RUNNER=rspec
 
+DOCKERFILE=${DOCKERFILE:-Dockerfile}
 
-docker build -t app --load .
+# Check if the environment variable is provided
+if [ "$DOCKERFILE" == "Dockerfile.v1.1" ]; then
+    echo "Using v1.1"
+else
+    echo "Using default Dockerfile"
+fi
+
+docker build -f $DOCKERFILE -t app --load .
 
 echo "+++ bktec"
 docker run \
