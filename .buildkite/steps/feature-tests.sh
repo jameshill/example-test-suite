@@ -9,7 +9,7 @@ export BUILDKITE_ORGANIZATION_SLUG="test-engine-sandbox"
 export BUILDKITE_TEST_ENGINE_SUITE_SLUG="feature-tests"
 export BUILDKITE_TEST_ENGINE_TEST_CMD="bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
 export BUILDKITE_TEST_ENGINE_DEBUG_ENABLED="false"
-export BUILDKITE_TEST_ENGINE_RETRY_COUNT=1
+export BUILDKITE_TEST_ENGINE_RETRY_COUNT=${RETRYCOUNT:-1}
 export BUILDKITE_TEST_ENGINE_RESULT_PATH="tmp/result.json"
 export BUILDKITE_TEST_ENGINE_TEST_RUNNER=rspec
 
