@@ -23,7 +23,7 @@ describe "Add To Cart flow", type: :feature do
 
     Buildkite::TestCollector.annotate('Trace Completed')
 
-    if rand < (0.15 * FLAKY_MULTIPLIER)
+    if rand < (0.35 * FLAKY_MULTIPLIER)
       expect(true).to eq(false), "items not added to cart"
     else
       expect(true).to eq(true), "checkout complete"
