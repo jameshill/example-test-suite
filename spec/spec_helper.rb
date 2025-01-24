@@ -2,6 +2,7 @@ require 'yaml'
 require 'json'
 require "buildkite/test_collector"
 require "active_support"
+require 'active_support/core_ext'
 require "aws-sdk-core"
 
 def get_aws_execution_tags
@@ -67,5 +68,30 @@ def spoof_duration(type: :unit)
     sleep(rand(0.1..0.3) * DURATION_MULTIPLIER)
   else
     sleep(rand(0.1..0.3) * DURATION_MULTIPLIER)
+  end
+end
+
+def redact_non_deterministic_data(input)
+  input = input.gsub(/#<\w+(::\w+)*(\s\w+:\s[^>]+)*>/, '{object}')
+  input = input.gsub(/\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b/, '{uuid}')
+  input = input.gsub(/\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?\b/, '{timestamp}')
+  input = input.gsub(/\b\d{4}-\d{2}-\d{2}\b/, '{date}')
+  input
+end
+
+RSpec.configure do |config|
+  config.define_derived_metadata do |metadata|
+    # Override automatic descriptions in Buildkite to allow for better grouping of tests
+    # because default descriptions with matchers will interpolate a pretty output of the object
+    # which often contains random characters (e.g. prefixed tokens, Forgery timestamps, etc.)
+    #
+    # Only do this in Buildkite because local output from matchers is useful for development.
+    if (ENV['BUILDKITE_BUILD_ID'] || "").present?
+      # This is a conditional that only changes metadata if it's an example spec (e.g. `it do` block)
+      if metadata.key?(:execution_result) && metadata.key?(:example_group) && metadata[:block].present?
+        metadata[:description] = redact_non_deterministic_data(metadata[:description])
+        puts metadata[:description]
+      end
+    end
   end
 end
