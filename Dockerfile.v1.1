@@ -7,7 +7,7 @@ RUN apk add --no-cache \
     curl
 
 # test-engine-client
-COPY --from=buildkite/test-engine-client:v1.3.2 /usr/local/bin/bktec /usr/local/bin/bktec
+COPY --from=buildkite/test-engine-client:v1.1.0 /usr/local/bin/bktec /usr/local/bin/bktec
 
 # Set working directory
 WORKDIR /app
