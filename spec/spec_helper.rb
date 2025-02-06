@@ -23,7 +23,7 @@ end
 execution_tags = get_aws_execution_tags || {}
 
 if ENV["SPOOF_ARM_MODE"] == "true"
-  execution_tags[:arch] = "arm64"
+  execution_tags["host.type"] = "arm64"
 
   duration_multiplier = 0.85
   # less flaky
