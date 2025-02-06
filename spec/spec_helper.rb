@@ -11,9 +11,9 @@ def get_aws_execution_tags
     .then { JSON.parse(_1) }
     .then do |doc|
       {
-        arch: doc["architecture"],
-        region: doc["region"],
-        instance_type: doc["instanceType"]
+        "cloud.region" =>  doc["region"],
+        "host.arch" => doc["architecture"],
+        "host.type" => doc["instanceType"]
       }
     end
 rescue => e
