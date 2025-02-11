@@ -33,16 +33,7 @@ else
   flaky_multiplier = 1
 end
 
-Buildkite::TestCollector.configure(
-  hook: :rspec,
-  # url: "http://analytics-api.buildkite.localhost/v1/uploads",
-  token: ENV["BUILDKITE_ANALYTICS_TOKEN"],
-  env: {
-    build_id: ENV["BUILDKITE_BUILD_ID"],
-    step_id: ENV["BUILDKITE_STEP_ID"],
-  },
-  tags: tags
-)
+Buildkite::TestCollector.configure(hook: :rspec, tags: tags)
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
 DURATION_MULTIPLIER = (1 + (Time.now.utc.to_i - REFERENCE_TIME)/2419200.0) * duration_multiplier
