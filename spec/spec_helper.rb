@@ -20,10 +20,10 @@ rescue => e
   $stderr.puts(e.inspect)
 end
 
-execution_tags = get_aws_execution_tags || {}
+tags = get_aws_execution_tags || {}
 
 if ENV["SPOOF_ARM_MODE"] == "true"
-  execution_tags["host.type"] = "arm64"
+  tags["host.type"] = "arm64"
 
   duration_multiplier = 0.85
   # less flaky
@@ -40,8 +40,8 @@ Buildkite::TestCollector.configure(
   env: {
     build_id: ENV["BUILDKITE_BUILD_ID"],
     step_id: ENV["BUILDKITE_STEP_ID"],
-    execution_tags: execution_tags
-  }
+  },
+  tags: tags
 )
 
 REFERENCE_TIME = Time.new(2024, 11, 27, 0, 0, 0).to_i
