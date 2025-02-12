@@ -13,7 +13,8 @@ def get_aws_execution_tags
       {
         "cloud.region" =>  doc["region"],
         "host.arch" => doc["architecture"],
-        "host.type" => doc["instanceType"]
+        "host.type" => doc["instanceType"],
+        "pipeline" => ENV["BUILDKITE_PIPELINE_SLUG"]
       }
     end
 rescue => e
