@@ -1,12 +1,4 @@
 steps:
-  - label: "Fetch timing data"
-    command: .buildkite/steps/fetch_timing_data
-    key: timing_data
-    agents:
-      queue: "default"
-
-  - wait: ~
-
   - label: ":rspec: RSpec unit"
     command: .buildkite/steps/test.sh
     key: unit
@@ -34,6 +26,8 @@ steps:
       BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
       BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
       BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+
+  - wait: ~
 
   - label: "Update Test Ownership?"
     branches: "main"
