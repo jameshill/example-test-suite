@@ -20,7 +20,6 @@ steps:
       BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
       BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
       BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
-      BUILDKITE_TEST_ENGINE_SPLIT_BY_EXAMPLE: true
 
   - label: ":chromium: Feature Specs"
     command: .buildkite/steps/feature-tests.sh
@@ -35,7 +34,6 @@ steps:
       BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
       BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
       BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
-      BUILDKITE_TEST_ENGINE_SPLIT_BY_EXAMPLE: true
 
   - label: "Update Test Ownership?"
     branches: "main"
