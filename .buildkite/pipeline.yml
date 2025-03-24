@@ -1,31 +1,98 @@
 steps:
-  - label: ":rspec: RSpec unit"
-    command: .buildkite/steps/test.sh
-    key: unit
-    agents:
-      queue: "default"
-    parallelism: 5
-    env:
-      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
-      BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
-      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
-      BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
-      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
-      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+  - group: "Linting"
+    key: "linting"
+    steps:
+      - label: "Beep"
+        command: "echo The command passed"
+      - label: "Boop"
+        command: "echo The command passed"
+      - label: "Tick"
+        command: "echo The command passed"
+      - label: "Tock"
+        command: "echo The command passed"
+  - group: "Coverage"
+    key: "coverage"
+    steps:
+      - label: "Beep"
+        command: "echo The command passed"
+      - label: "Boop"
+        command: "echo The command passed"
+      - label: "Tick"
+        command: "echo The command passed"
+      - label: "Tock"
+        command: "echo The command passed"
+  - group: "Build"
+    key: "build"
+    steps:
+      - label: "Beep"
+        command: "echo The command passed"
+      - label: "Boop"
+        command: "echo The command passed"
+      - label: "Tick"
+        command: "echo The command passed"
+      - label: "Tock"
+        command: "echo The command passed"
 
-  - label: ":chromium: Feature Specs"
-    command: .buildkite/steps/feature-tests.sh
-    key: acceptance
-    agents:
-      queue: "default"
-    parallelism: 10
-    env:
-      BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
-      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
-      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
-      BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
-      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
-      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+  - wait: ~
+
+  - group: "Test"
+    key: "test"
+    steps:
+      - label: ":rspec: RSpec unit"
+        command: .buildkite/steps/test.sh
+        key: unit
+        agents:
+          queue: "default"
+        parallelism: 5
+        env:
+          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
+          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+
+      - label: ":chromium: Feature Specs"
+        command: .buildkite/steps/feature-tests.sh
+        key: acceptance_a
+        agents:
+          queue: "default"
+        parallelism: 10
+        env:
+          BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
+          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+
+      - label: "More Feature Specs"
+        command: .buildkite/steps/feature-tests.sh
+        key: acceptance_b
+        agents:
+          queue: "default"
+        parallelism: 10
+        env:
+          BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
+          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+
+      - label: "Even More Feature Specs"
+        command: .buildkite/steps/feature-tests.sh
+        key: acceptance_c
+        agents:
+          queue: "default"
+        parallelism: 10
+        env:
+          BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
+          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
 
   - wait: ~
 
