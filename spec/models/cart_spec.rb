@@ -5,7 +5,12 @@ describe "Cart", type: :model do
 
     it "should return the items" do
       spoof_duration(type: :unit)
-      expect(true).to eq(true)
+
+      if ENV["SIMULATE_FAILURES"] == "true"
+        expect(true).to eq(false)
+      else
+        expect(true).to eq(true)
+      end
     end
 
     it "should not be nil" do
@@ -45,7 +50,11 @@ describe "Cart", type: :model do
 
     it "should not allow duplicates if unique" do
       spoof_duration(type: :unit)
-      expect(true).to eq(true)
+      if ENV["SIMULATE_FAILURES"] == "true"
+        expect(true).to eq(false)
+      else
+        expect(true).to eq(true)
+      end
     end
 
     it "should adhere to any defined format" do
@@ -93,7 +102,11 @@ describe "Cart", type: :model do
 
     it "should persist to the database" do
       spoof_duration(type: :unit)
-      expect(true).to eq(true)
+      if ENV["SIMULATE_FAILURES"] == "true"
+        expect(true).to eq(false)
+      else
+        expect(true).to eq(true)
+      end
     end
 
     it "should be accessible via the model" do
@@ -156,7 +169,11 @@ describe "Cart", type: :model do
 
     it "should be accessible via the model" do
       spoof_duration(type: :unit)
-      expect(true).to eq(true)
+      if ENV["SIMULATE_FAILURES"] == "true"
+        expect(true).to eq(false)
+      else
+        expect(true).to eq(true)
+      end
     end
 
     it "should not allow duplicates if unique" do
@@ -257,7 +274,11 @@ describe "Cart", type: :model do
 
     it "should not allow invalid values" do
       spoof_duration(type: :unit)
-      expect(true).to eq(true)
+      if ENV["SIMULATE_FAILURES"] == "true"
+        expect(true).to eq(false)
+      else
+        expect(true).to eq(true)
+      end
     end
 
     it "should be required if applicable" do
