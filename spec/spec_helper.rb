@@ -95,4 +95,9 @@ RSpec.configure do |config|
       end
     end
   end
+
+  config.before(:each) do |example|
+    type = example.metadata[:file_path].split('/')[2]
+    Buildkite::TestCollector.tag_execution("test.type", type)
+  end
 end
