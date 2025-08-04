@@ -45,8 +45,8 @@ Buildkite::TestCollector.configure(
   tags: tags
 )
 
-REFERENCE_TIME = Time.new(2025, 03, 10, 0, 0, 0).to_i
-DURATION_MULTIPLIER = (1 + (Time.now.utc.to_i - REFERENCE_TIME)/2419200.0) * duration_multiplier
+# REFERENCE_TIME = Time.new(2025, 03, 10, 0, 0, 0).to_i
+DURATION_MULTIPLIER = 1 # = (1 + (Time.now.utc.to_i - REFERENCE_TIME)/2419200.0) * duration_multiplier
 FLAKY_MULTIPLIER = 1 * flaky_multiplier
 
 puts "DURATION_MULTIPLIER = #{DURATION_MULTIPLIER}"
