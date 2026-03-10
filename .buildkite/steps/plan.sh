@@ -136,10 +136,15 @@ ${CLAUDE_HTML:-<p><em>Analysis unavailable</em></p>}
 EOF
 
     echo "Agent version: $(buildkite-agent --version)"
+    echo "Job ID: ${BUILDKITE_JOB_ID}"
+    echo "Annotation body:"
+    cat annotation.html
+    echo "---"
     buildkite-agent annotate --style info \
       --context "bin-pack-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}" \
       --scope=job \
       < annotation.html
+    echo "Annotate exit code: $?"
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
   fi
