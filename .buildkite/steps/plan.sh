@@ -65,10 +65,10 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
 
     echo "+++ Annotating build with plan summary"
 
-    # Build per-node stats table rows
+    # Build per-node stats table rows (markdown)
     TABLE_ROWS=$(jq -r '
       .tasks | to_entries | sort_by(.key | tonumber) | .[] |
-      "<tr><td><strong>Node \(.value.node_number)</strong></td><td>\(.value.tests | length)</td><td>\(.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100)s</td></tr>"
+      "| Node \(.value.node_number) | \(.value.tests | length) | \(.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100)s |"
     ' "$PLAN_PRETTY")
 
     # Compact plan summary for Claude prompt (avoids sending the full JSON verbatim)
@@ -114,33 +114,26 @@ Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
         '{model: "claude-sonnet-4-5", max_tokens: 600, messages: [{role: "user", content: $prompt}]}'
       )" | jq -r '.content[0].text // empty')
 
-    # Convert plain-text paragraphs to HTML <p> tags
-    CLAUDE_HTML=$(echo "$CLAUDE_RESPONSE" | python3 -c "
-import sys
-paragraphs = [p.strip() for p in sys.stdin.read().strip().split('\n\n') if p.strip()]
-print('<p>' + '</p><p>'.join(paragraphs) + '</p>' if paragraphs else '')
-")
+    cat > annotation.md <<EOF
+![Bin packing chart](artifact://${PLAN_CHART})
 
-    cat > annotation.html <<EOF
-<h3>🗂 Bin Packing Plan &mdash; ${BUILDKITE_TEST_ENGINE_SUITE_SLUG}</h3>
-<img src="artifact://${PLAN_CHART}" style="max-width:100%" />
-<details>
-  <summary><strong>Node breakdown</strong></summary>
-  <table>
-    <tr><th>Node</th><th>Files</th><th>Duration</th></tr>
-    ${TABLE_ROWS}
-  </table>
-</details>
-<h4>🤖 AI Analysis</h4>
-${CLAUDE_HTML:-<p><em>Analysis unavailable</em></p>}
+| Node | Files | Duration |
+|------|-------|----------|
+${TABLE_ROWS}
+
+### 🤖 AI Analysis
+
+${CLAUDE_RESPONSE:-*Analysis unavailable*}
 EOF
 
     echo "Agent version: $(buildkite-agent --version)"
     echo "Job ID: ${BUILDKITE_JOB_ID}"
     echo "Annotation body:"
-    cat annotation.html
+    cat annotation.md
     echo "---"
-    buildkite-agent annotate --scope=job --style "info" < annotation.html
+    buildkite-agent annotate --scope=job --style "info" \
+      --endpoint https://agent-edge.buildkite.com/v3 \
+      < annotation.md
     echo "Annotate exit code: $?"
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
