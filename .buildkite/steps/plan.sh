@@ -53,12 +53,15 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
   cat bin-packing-plan.json
 
   if [[ "$HTTP_STATUS" == "200" ]]; then
-    jq '.' bin-packing-plan.json > bin-packing-plan-pretty.json
-    buildkite-agent artifact upload bin-packing-plan-pretty.json
+    PLAN_PRETTY="bin-packing-plan-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}.json"
+    PLAN_CHART="bin-packing-plan-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}.png"
+
+    jq '.' bin-packing-plan.json > "$PLAN_PRETTY"
+    buildkite-agent artifact upload "$PLAN_PRETTY"
 
     echo "+++ Generating bin-packing chart"
-    python3 .buildkite/scripts/chart_plan.py bin-packing-plan-pretty.json bin-packing-plan-chart.png
-    buildkite-agent artifact upload bin-packing-plan-chart.png
+    python3 .buildkite/scripts/chart_plan.py "$PLAN_PRETTY" "$PLAN_CHART"
+    buildkite-agent artifact upload "$PLAN_CHART"
 
     echo "+++ Annotating build with plan summary"
 
@@ -66,7 +69,7 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
     TABLE_ROWS=$(jq -r '
       .tasks | to_entries | sort_by(.key | tonumber) | .[] |
       "<tr><td><strong>Node \(.value.node_number)</strong></td><td>\(.value.tests | length)</td><td>\(.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100)s</td></tr>"
-    ' bin-packing-plan-pretty.json)
+    ' "$PLAN_PRETTY")
 
     # Compact plan summary for Claude prompt (avoids sending the full JSON verbatim)
     PLAN_SUMMARY=$(jq -c '{
@@ -75,24 +78,30 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
       nodes: [
         .tasks | to_entries[] | {
           node: .value.node_number,
-          files: (.value.tests | length),
           total_duration_seconds: (.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100),
           files: [.value.tests[] | {path: .path, duration_seconds: (.estimated_duration / 1000000 * 100 | round / 100)}]
         }
       ] | sort_by(.node)
-    }' bin-packing-plan-pretty.json)
+    }' "$PLAN_PRETTY")
+
+    # Whether this runner supports split-by-example
+    case "${BUILDKITE_TEST_ENGINE_TEST_RUNNER}" in
+      rspec|pytest) SPLIT_BY_EXAMPLE_NOTE="The test runner is '${BUILDKITE_TEST_ENGINE_TEST_RUNNER}', which supports BUILDKITE_TEST_ENGINE_SPLIT_BY_EXAMPLE. If any individual test files are slow enough to be bottlenecks, suggest enabling this to allow bktec to split those files at the example level for finer-grained distribution." ;;
+      *) SPLIT_BY_EXAMPLE_NOTE="" ;;
+    esac
 
     PROMPT="You are analysing a bin-packing plan for a CI test suite split across parallel nodes.
 
 Plan data (durations in seconds):
 ${PLAN_SUMMARY}
 
-Configuration: max_parallelism=${BKTEC_MAX_PARALLELISM}, target_time=${BKTEC_TARGET_TIME:-2m}, suite=${BUILDKITE_TEST_ENGINE_SUITE_SLUG}
+Configuration: max_parallelism=${BKTEC_MAX_PARALLELISM}, target_time=${BKTEC_TARGET_TIME:-2m}, suite=${BUILDKITE_TEST_ENGINE_SUITE_SLUG}, runner=${BUILDKITE_TEST_ENGINE_TEST_RUNNER}
 
 Provide a concise analysis covering:
 1. How well-balanced the distribution is across nodes, citing specific durations
 2. Any bottleneck files that dominate a single node
 3. Concrete suggestions for max_parallelism and target_time to improve the pack
+${SPLIT_BY_EXAMPLE_NOTE}
 
 Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
 
@@ -114,7 +123,7 @@ print('<p>' + '</p><p>'.join(paragraphs) + '</p>' if paragraphs else '')
 
     cat > annotation.html <<EOF
 <h3>🗂 Bin Packing Plan &mdash; ${BUILDKITE_TEST_ENGINE_SUITE_SLUG}</h3>
-<img src="artifact://bin-packing-plan-chart.png" style="max-width:100%" />
+<img src="artifact://${PLAN_CHART}" style="max-width:100%" />
 <details>
   <summary><strong>Node breakdown</strong></summary>
   <table>
