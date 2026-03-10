@@ -15,7 +15,15 @@ docker rm bktec-extract
 chmod +x "$BKTEC"
 
 echo "+++ bktec plan"
-"$BKTEC" plan \
+PLAN_JSON=$("$BKTEC" plan --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
-  --target-time "${BKTEC_TARGET_TIME:-2m}" \
-  --pipeline-upload .buildkite/dynamic-parallel-template.yml
+  --target-time "${BKTEC_TARGET_TIME:-2m}")
+
+# Upload plan as artifact for inspection
+echo "$PLAN_JSON" > plan.json
+buildkite-agent artifact upload plan.json
+
+# Set BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER and BUILDKITE_TEST_ENGINE_PARALLELISM
+# in the job environment, then upload the pipeline template with those vars substituted
+echo "$PLAN_JSON" | buildkite-agent env set --input-format=json -
+buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
