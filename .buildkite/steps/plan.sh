@@ -36,9 +36,11 @@ buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
 # Only possible when bktec successfully created a server-side plan (not a fallback)
 if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
   echo "+++ Fetching bin-packing plan"
-  curl --fail \
+  curl --fail --get \
     --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
-    "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan?identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}&job_retry_count=0" \
+    --data-urlencode "identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}" \
+    --data-urlencode "job_retry_count=0" \
+    "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan" \
     | jq '.' > bin-packing-plan.json
   buildkite-agent artifact upload bin-packing-plan.json
 else
