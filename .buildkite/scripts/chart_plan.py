@@ -8,13 +8,18 @@ import sys
 
 try:
     import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
 except ImportError:
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'matplotlib', '--quiet'])
+    install_dir = '/tmp/bk_py_deps'
+    os.makedirs(install_dir, exist_ok=True)
+    subprocess.check_call([
+        sys.executable, '-m', 'pip', 'install', 'matplotlib',
+        '--target', install_dir, '--quiet'
+    ])
+    sys.path.insert(0, install_dir)
     import matplotlib
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
+
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 plan_file = sys.argv[1] if len(sys.argv) > 1 else 'bin-packing-plan-pretty.json'
 output_file = sys.argv[2] if len(sys.argv) > 2 else 'bin-packing-plan-chart.png'
