@@ -35,40 +35,37 @@ steps:
 
   - wait: ~
 
-  - group: "Test"
-    key: "test"
-    steps:
-      - label: ":rspec: Generate unit testing plan"
-        command: .buildkite/steps/plan.sh
-        key: unit_plan
-        agents:
-          queue: "default"
-        env:
-          BKTEC_MAX_PARALLELISM: 5
-          BKTEC_STEP_LABEL: ":rspec: RSpec unit"
-          BKTEC_STEP_COMMAND: ".buildkite/steps/test.sh"
-          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
-          BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
-          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
-          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
-          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
-          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+  - label: ":rspec: Generate unit testing plan"
+    command: .buildkite/steps/plan.sh
+    key: unit_plan
+    agents:
+      queue: "default"
+    env:
+      BKTEC_MAX_PARALLELISM: 5
+      BKTEC_STEP_LABEL: ":rspec: RSpec unit"
+      BKTEC_STEP_COMMAND: ".buildkite/steps/test.sh"
+      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
+      BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
 
-      - label: ":chromium: Generate feature testing plan"
-        command: .buildkite/steps/plan.sh
-        key: feature_plan
-        agents:
-          queue: "default"
-        env:
-          BKTEC_MAX_PARALLELISM: 10
-          BKTEC_STEP_LABEL: ":chromium: Feature Specs"
-          BKTEC_STEP_COMMAND: ".buildkite/steps/feature-tests.sh"
-          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
-          BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
-          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
-          BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
-          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
-          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+  - label: ":chromium: Generate feature testing plan"
+    command: .buildkite/steps/plan.sh
+    key: feature_plan
+    agents:
+      queue: "default"
+    env:
+      BKTEC_MAX_PARALLELISM: 10
+      BKTEC_STEP_LABEL: ":chromium: Feature Specs"
+      BKTEC_STEP_COMMAND: ".buildkite/steps/feature-tests.sh"
+      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
+      BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
+      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
 
   - wait: ~
 
