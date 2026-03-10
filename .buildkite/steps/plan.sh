@@ -15,7 +15,7 @@ docker rm bktec-extract
 chmod +x "$BKTEC"
 
 echo "+++ bktec plan"
-PLAN_JSON=$("$BKTEC" plan --json \
+PLAN_JSON=$("$BKTEC" plan --debug --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
   --target-time "${BKTEC_TARGET_TIME:-2m}")
 
@@ -32,19 +32,29 @@ BUILDKITE_TEST_ENGINE_PARALLELISM=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_E
 # Upload the pipeline now so the test steps can start running immediately
 buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
 
-# Fetch the full bin-packing plan and upload as an artifact
-# Only possible when bktec successfully created a server-side plan (not a fallback)
+# Fetch the full bin-packing plan and upload as an artifact.
+# Only possible when bktec successfully created a server-side plan (not a fallback).
+# A fallback plan has a locally-generated identifier that does not exist on the server.
 if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
   echo "+++ Fetching bin-packing plan"
-  echo "URL: https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan"
+  echo "Org: ${BUILDKITE_ORGANIZATION_SLUG}, Suite: ${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
   echo "Identifier: ${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}"
-  curl --fail --get --verbose \
+
+  HTTP_STATUS=$(curl --get --write-out "%{http_code}" --output bin-packing-plan.json \
     --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
     --data-urlencode "identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}" \
     --data-urlencode "job_retry_count=0" \
-    "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan" \
-    | jq '.' > bin-packing-plan.json
-  buildkite-agent artifact upload bin-packing-plan.json
+    "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan")
+
+  echo "HTTP status: ${HTTP_STATUS}"
+  cat bin-packing-plan.json
+
+  if [[ "$HTTP_STATUS" == "200" ]]; then
+    jq '.' bin-packing-plan.json > bin-packing-plan-pretty.json
+    buildkite-agent artifact upload bin-packing-plan-pretty.json
+  else
+    echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
+  fi
 else
   echo "Skipping bin-packing plan artifact: bktec fell back to non-intelligent splitting"
 fi
