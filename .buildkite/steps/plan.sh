@@ -137,7 +137,7 @@ EOF
 
     buildkite-agent annotate --style info \
       --context "bin-pack-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}" \
-      --scope job \
+      --scope=job \
       < annotation.html
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
