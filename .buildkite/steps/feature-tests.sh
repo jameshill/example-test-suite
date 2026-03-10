@@ -45,5 +45,5 @@ docker run \
   --env BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER \
   --env SPOOF_ARM_MODE \
   --env FLAKY_MODE \
-  -it --rm app sh -c "bktec"
+  -it --rm app sh -c "bktec run"
 
