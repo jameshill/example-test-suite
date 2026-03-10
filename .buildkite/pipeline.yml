@@ -39,11 +39,12 @@ steps:
     key: "test"
     steps:
       - label: ":rspec: Plan RSpec unit"
-        command: "bktec plan --max-parallelism 5 --target-time 2m --pipeline-upload .buildkite/dynamic-parallel-template.yml"
+        command: .buildkite/steps/plan.sh
         key: unit_plan
         agents:
           queue: "default"
         env:
+          BKTEC_MAX_PARALLELISM: 5
           BKTEC_STEP_LABEL: ":rspec: RSpec unit"
           BKTEC_STEP_COMMAND: ".buildkite/steps/test.sh"
           BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
@@ -54,11 +55,12 @@ steps:
           BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
 
       - label: ":chromium: Plan Feature Specs"
-        command: "bktec plan --max-parallelism 10 --target-time 2m --pipeline-upload .buildkite/dynamic-parallel-template.yml"
+        command: .buildkite/steps/plan.sh
         key: feature_plan
         agents:
           queue: "default"
         env:
+          BKTEC_MAX_PARALLELISM: 10
           BKTEC_STEP_LABEL: ":chromium: Feature Specs"
           BKTEC_STEP_COMMAND: ".buildkite/steps/feature-tests.sh"
           BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
