@@ -59,6 +59,76 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
     echo "+++ Generating bin-packing chart"
     python3 .buildkite/scripts/chart_plan.py bin-packing-plan-pretty.json bin-packing-plan-chart.png
     buildkite-agent artifact upload bin-packing-plan-chart.png
+
+    echo "+++ Annotating build with plan summary"
+
+    # Build per-node stats table rows
+    TABLE_ROWS=$(jq -r '
+      .tasks | to_entries | sort_by(.key | tonumber) | .[] |
+      "<tr><td><strong>Node \(.value.node_number)</strong></td><td>\(.value.tests | length)</td><td>\(.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100)s</td></tr>"
+    ' bin-packing-plan-pretty.json)
+
+    # Compact plan summary for Claude prompt (avoids sending the full JSON verbatim)
+    PLAN_SUMMARY=$(jq -c '{
+      parallelism: .parallelism,
+      settings: .settings,
+      nodes: [
+        .tasks | to_entries[] | {
+          node: .value.node_number,
+          files: (.value.tests | length),
+          total_duration_seconds: (.value.tests | map(.estimated_duration) | add // 0 | . / 1000000 * 100 | round / 100),
+          files: [.value.tests[] | {path: .path, duration_seconds: (.estimated_duration / 1000000 * 100 | round / 100)}]
+        }
+      ] | sort_by(.node)
+    }' bin-packing-plan-pretty.json)
+
+    PROMPT="You are analysing a bin-packing plan for a CI test suite split across parallel nodes.
+
+Plan data (durations in seconds):
+${PLAN_SUMMARY}
+
+Configuration: max_parallelism=${BKTEC_MAX_PARALLELISM}, target_time=${BKTEC_TARGET_TIME:-2m}, suite=${BUILDKITE_TEST_ENGINE_SUITE_SLUG}
+
+Provide a concise analysis covering:
+1. How well-balanced the distribution is across nodes, citing specific durations
+2. Any bottleneck files that dominate a single node
+3. Concrete suggestions for max_parallelism and target_time to improve the pack
+
+Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
+
+    CLAUDE_RESPONSE=$(curl --silent --fail -X POST \
+      "${BUILDKITE_AGENT_ENDPOINT}/ai/anthropic/v1/messages" \
+      -H "Content-Type: application/json" \
+      -H "x-api-key: ${BUILDKITE_AGENT_ACCESS_TOKEN}" \
+      --data "$(jq -n \
+        --arg prompt "$PROMPT" \
+        '{model: "claude-sonnet-4-5", max_tokens: 600, messages: [{role: "user", content: $prompt}]}'
+      )" | jq -r '.content[0].text // empty')
+
+    # Convert plain-text paragraphs to HTML <p> tags
+    CLAUDE_HTML=$(echo "$CLAUDE_RESPONSE" | python3 -c "
+import sys
+paragraphs = [p.strip() for p in sys.stdin.read().strip().split('\n\n') if p.strip()]
+print('<p>' + '</p><p>'.join(paragraphs) + '</p>' if paragraphs else '')
+")
+
+    cat > annotation.html <<EOF
+<h3>🗂 Bin Packing Plan &mdash; ${BUILDKITE_TEST_ENGINE_SUITE_SLUG}</h3>
+<img src="artifact://bin-packing-plan-chart.png" style="max-width:100%" />
+<details>
+  <summary><strong>Node breakdown</strong></summary>
+  <table>
+    <tr><th>Node</th><th>Files</th><th>Duration</th></tr>
+    ${TABLE_ROWS}
+  </table>
+</details>
+<h4>🤖 AI Analysis</h4>
+${CLAUDE_HTML:-<p><em>Analysis unavailable</em></p>}
+EOF
+
+    buildkite-agent annotate --style info \
+      --context "bin-pack-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}" \
+      < annotation.html
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
   fi
