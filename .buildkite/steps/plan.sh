@@ -19,6 +19,10 @@ PLAN_JSON=$("$BKTEC" plan --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
   --target-time "${BKTEC_TARGET_TIME:-2m}")
 
+echo "Plan JSON: $PLAN_JSON"
+echo "$PLAN_JSON" > plan.json
+buildkite-agent artifact upload plan.json
+
 # Export plan vars into the current shell so pipeline upload can substitute them
 export BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER
 export BUILDKITE_TEST_ENGINE_PARALLELISM
