@@ -25,10 +25,14 @@ export BUILDKITE_TEST_ENGINE_PARALLELISM
 BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER')
 BUILDKITE_TEST_ENGINE_PARALLELISM=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PARALLELISM')
 
+# Upload the pipeline now so the test steps can start running immediately
+buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
+
 # Fetch the full bin-packing plan and upload as an artifact
 # Only possible when bktec successfully created a server-side plan (not a fallback)
 if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
-  curl --silent --fail \
+  echo "+++ Fetching bin-packing plan"
+  curl --fail \
     --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
     "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan?identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}&job_retry_count=0" \
     | jq '.' > bin-packing-plan.json
@@ -36,5 +40,3 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
 else
   echo "Skipping bin-packing plan artifact: bktec fell back to non-intelligent splitting"
 fi
-
-buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
