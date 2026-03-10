@@ -23,7 +23,10 @@ PLAN_JSON=$("$BKTEC" plan --json \
 echo "$PLAN_JSON" > plan.json
 buildkite-agent artifact upload plan.json
 
-# Set BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER and BUILDKITE_TEST_ENGINE_PARALLELISM
-# in the job environment, then upload the pipeline template with those vars substituted
-echo "$PLAN_JSON" | buildkite-agent env set --input-format=json -
+# Export plan vars into the current shell so pipeline upload can substitute them
+export BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER
+export BUILDKITE_TEST_ENGINE_PARALLELISM
+BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER')
+BUILDKITE_TEST_ENGINE_PARALLELISM=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PARALLELISM')
+
 buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
