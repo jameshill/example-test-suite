@@ -140,9 +140,7 @@ EOF
     echo "Annotation body:"
     cat annotation.html
     echo "---"
-    buildkite-agent annotate --scope=job --style "info" \
-      --endpoint https://agent-edge.buildkite.com/v3 \
-      < annotation.html
+    buildkite-agent annotate --scope=job --style "info" < annotation.html
     echo "Annotate exit code: $?"
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
