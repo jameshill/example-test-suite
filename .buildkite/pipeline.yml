@@ -38,7 +38,7 @@ steps:
   - group: "Test"
     key: "test"
     steps:
-      - label: ":rspec: Plan RSpec unit"
+      - label: ":rspec: Generate unit testing plan"
         command: .buildkite/steps/plan.sh
         key: unit_plan
         agents:
@@ -54,7 +54,7 @@ steps:
           BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
           BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
 
-      - label: ":chromium: Plan Feature Specs"
+      - label: ":chromium: Generate feature testing plan"
         command: .buildkite/steps/plan.sh
         key: feature_plan
         agents:
