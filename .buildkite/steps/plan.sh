@@ -15,6 +15,9 @@ docker rm bktec-extract
 chmod +x "$BKTEC"
 
 echo "+++ bktec plan"
+# Disable split-by-example for planning — file-level granularity is sufficient
+# for calculating parallelism, and the filter_tests endpoint it requires is unreliable
+unset BUILDKITE_TEST_ENGINE_SPLIT_BY_EXAMPLE
 PLAN_JSON=$("$BKTEC" plan --debug --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
   --target-time "${BKTEC_TARGET_TIME:-2m}")
