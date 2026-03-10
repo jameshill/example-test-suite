@@ -6,16 +6,9 @@ export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get FEATURE_SUITE_TOKE
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 export BUILDKITE_TEST_ENGINE_RETRY_COUNT=${RETRYCOUNT:-1}
 
-DOCKERFILE=${DOCKERFILE:-Dockerfile}
-
-# Check if the environment variable is provided
-if [ "$DOCKERFILE" == "Dockerfile.v1.1" ]; then
-    echo "Using v1.1"
-else
-    echo "Using default Dockerfile"
-fi
-
-docker build -f $DOCKERFILE -t app --load .
+IMAGE="${DOCKER_IMAGE}:${BUILDKITE_COMMIT}"
+docker pull "$IMAGE"
+docker tag "$IMAGE" app
 
 echo "+++ bktec"
 docker run \

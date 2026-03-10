@@ -33,6 +33,12 @@ steps:
       - label: "Tock"
         command: "echo The command passed"
 
+  - label: ":docker: Build image"
+    key: "docker-build"
+    command: .buildkite/steps/build-image.sh
+    agents:
+      queue: "default"
+
   - wait: ~
 
   - group: "Test"
