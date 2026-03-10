@@ -55,6 +55,10 @@ if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
   if [[ "$HTTP_STATUS" == "200" ]]; then
     jq '.' bin-packing-plan.json > bin-packing-plan-pretty.json
     buildkite-agent artifact upload bin-packing-plan-pretty.json
+
+    echo "+++ Generating bin-packing chart"
+    python3 .buildkite/scripts/chart_plan.py bin-packing-plan-pretty.json bin-packing-plan-chart.png
+    buildkite-agent artifact upload bin-packing-plan-chart.png
   else
     echo "Skipping bin-packing plan artifact: server returned ${HTTP_STATUS} (bktec may have used a fallback plan)"
   fi
