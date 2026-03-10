@@ -97,13 +97,22 @@ ${PLAN_SUMMARY}
 
 Configuration: max_parallelism=${BKTEC_MAX_PARALLELISM}, target_time=${BKTEC_TARGET_TIME:-2m}, suite=${BUILDKITE_TEST_ENGINE_SUITE_SLUG}, runner=${BUILDKITE_TEST_ENGINE_TEST_RUNNER}
 
-Provide a concise analysis covering:
-1. How well-balanced the distribution is across nodes, citing specific durations
-2. Any bottleneck files that dominate a single node
-3. Concrete suggestions for max_parallelism and target_time to improve the pack
-${SPLIT_BY_EXAMPLE_NOTE}
+Produce a markdown report with one section per recommendation below. Each section must have a ### heading and 2-4 sentences of reasoning that cite specific file names and durations from the plan data.
 
-Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
+### Balance
+Assess how evenly the total duration is spread across nodes. Cite the fastest and slowest node durations and calculate the imbalance ratio.
+
+### Bottlenecks
+Identify any individual files whose duration dominates a single node. Name the file, its duration, and what share of that node's total it represents.
+
+### Parallelism
+Recommend a specific max_parallelism value and explain why — reference whether nodes are over- or under-utilised and what the new target wall-clock time would be.
+
+### Target Time
+Recommend a specific target_time value and explain why — reference the current longest node duration and how adjusting the target would affect node count.
+${SPLIT_BY_EXAMPLE_NOTE:+
+### Split by Example
+${SPLIT_BY_EXAMPLE_NOTE}}"
 
     CLAUDE_RESPONSE=$(curl --silent --fail -X POST \
       "${BUILDKITE_AGENT_ENDPOINT}/ai/anthropic/v1/messages" \
@@ -111,7 +120,7 @@ Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
       -H "x-api-key: ${BUILDKITE_AGENT_ACCESS_TOKEN}" \
       --data "$(jq -n \
         --arg prompt "$PROMPT" \
-        '{model: "claude-sonnet-4-5", max_tokens: 600, messages: [{role: "user", content: $prompt}]}'
+        '{model: "claude-sonnet-4-5", max_tokens: 1024, messages: [{role: "user", content: $prompt}]}'
       )" | jq -r '.content[0].text // empty')
 
     cat > annotation.md <<EOF
@@ -120,8 +129,6 @@ Keep it to 2-3 short paragraphs. Be specific — use file names and durations."
 | Node | Files | Duration |
 |------|-------|----------|
 ${TABLE_ROWS}
-
-### 🤖 AI Analysis
 
 ${CLAUDE_RESPONSE:-*Analysis unavailable*}
 EOF

@@ -73,7 +73,8 @@ min_visual_width = max_duration * 0.02
 
 for i, (_, task) in enumerate(sorted_tasks):
     left = 0.0
-    for test in task.get('tests', []):
+    tests = sorted(task.get('tests', []), key=lambda t: t.get('estimated_duration', 0), reverse=True)
+    for test in tests:
         path = test.get('path', '')
         # estimated_duration is in microseconds; convert to seconds
         duration = test.get('estimated_duration', 0) / 1_000_000
