@@ -3,6 +3,7 @@
 
 import json
 import os
+import subprocess
 import sys
 
 try:
@@ -10,7 +11,7 @@ try:
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
 except ImportError:
-    os.system("pip install matplotlib --quiet")
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'matplotlib', '--quiet'])
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ if not all_files:
     print("No test files found in plan, skipping chart generation")
     sys.exit(0)
 
-# Assign a colour per file, cycling through tab20 + tab20b palettes
+# Assign a colour per file, cycling through tab20 + tab20b + tab20c palettes
 palette = (
     [plt.get_cmap('tab20')(i) for i in range(20)] +
     [plt.get_cmap('tab20b')(i) for i in range(20)] +
@@ -54,25 +55,33 @@ file_index = {f: i + 1 for i, f in enumerate(all_files)}
 n_nodes = len(sorted_tasks)
 fig, (ax, ax_leg) = plt.subplots(
     1, 2,
-    figsize=(18, max(5, n_nodes * 0.7 + 2)),
+    figsize=(18, max(5, n_nodes * 0.9 + 2)),
     gridspec_kw={'width_ratios': [2, 1]}
 )
+
+# Minimum visual width so tiny segments are always visible (2% of max node duration)
+max_duration = max(
+    sum(t.get('estimated_duration', 0) for t in task.get('tests', []))
+    for _, task in sorted_tasks
+) / 1_000_000
+min_visual_width = max_duration * 0.02
 
 for i, (_, task) in enumerate(sorted_tasks):
     left = 0.0
     for test in task.get('tests', []):
         path = test.get('path', '')
-        # estimated_duration is in milliseconds; convert to seconds
-        duration = test.get('estimated_duration', 0) / 1000.0
-        ax.barh(i, duration, left=left,
+        # estimated_duration is in microseconds; convert to seconds
+        duration = test.get('estimated_duration', 0) / 1_000_000
+        draw_width = max(duration, min_visual_width)
+        ax.barh(i, draw_width, left=left,
                 color=file_color.get(path, '#cccccc'),
                 edgecolor='white', linewidth=0.5, height=0.65)
-        # Label the segment with the file index number if wide enough
-        if duration >= 0.5:
-            ax.text(left + duration / 2, i, str(file_index[path]),
+        # Label the segment with the file index number if wide enough to fit
+        if draw_width >= 0.05:
+            ax.text(left + draw_width / 2, i, str(file_index[path]),
                     ha='center', va='center',
-                    fontsize=7, color='white', fontweight='bold')
-        left += duration
+                    fontsize=8, color='white', fontweight='bold')
+        left += draw_width
 
 ax.set_yticks(range(n_nodes))
 ax.set_yticklabels([f'Node {t["node_number"]}' for _, t in sorted_tasks])
@@ -83,21 +92,31 @@ ax.grid(axis='x', alpha=0.3, linestyle='--')
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 
-# Right-hand index: number → full file path
+# Right-hand index: coloured swatch + number + full file path
 ax_leg.axis('off')
-lines = ['#   File\n' + '─' * 60]
+y = 0.98
+line_height = 0.062
+header_props = dict(fontsize=8, fontfamily='monospace', fontweight='bold',
+                    transform=ax_leg.transAxes, verticalalignment='top')
+ax_leg.text(0.02, y, '#    File', **header_props)
+y -= line_height
+ax_leg.text(0.02, y, '─' * 55, fontsize=8, fontfamily='monospace',
+            transform=ax_leg.transAxes, verticalalignment='top', color='#888888')
+y -= line_height
+
 for path in all_files:
     idx = file_index[path]
-    # Strip common spec/ prefix to save space
-    label = path.removeprefix('spec/')
-    lines.append(f'{idx:>3}.  {label}')
-
-ax_leg.text(
-    0.02, 0.98, '\n'.join(lines),
-    transform=ax_leg.transAxes,
-    fontsize=7, verticalalignment='top', fontfamily='monospace',
-    bbox=dict(boxstyle='round,pad=0.5', facecolor='#f5f5f5', alpha=0.8)
-)
+    color = file_color[path]
+    label = path.lstrip('./')
+    # Coloured square swatch
+    ax_leg.add_patch(plt.Rectangle(
+        (0.02, y - 0.025), 0.04, 0.04,
+        transform=ax_leg.transAxes, color=color, clip_on=False
+    ))
+    ax_leg.text(0.08, y, f'{idx:>3}.  {label}',
+                transform=ax_leg.transAxes, fontsize=8,
+                fontfamily='monospace', verticalalignment='top')
+    y -= line_height
 
 plt.tight_layout()
 plt.savefig(output_file, dpi=150, bbox_inches='tight', facecolor='white')
