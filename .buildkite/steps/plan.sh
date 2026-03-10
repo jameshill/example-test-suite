@@ -135,6 +135,7 @@ print('<p>' + '</p><p>'.join(paragraphs) + '</p>' if paragraphs else '')
 ${CLAUDE_HTML:-<p><em>Analysis unavailable</em></p>}
 EOF
 
+    echo "Agent version: $(buildkite-agent --version)"
     buildkite-agent annotate --style info \
       --context "bin-pack-${BUILDKITE_TEST_ENGINE_SUITE_SLUG}" \
       --scope=job \
