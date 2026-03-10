@@ -19,14 +19,17 @@ PLAN_JSON=$("$BKTEC" plan --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
   --target-time "${BKTEC_TARGET_TIME:-2m}")
 
-# Upload plan as artifact for inspection
-echo "$PLAN_JSON" > plan.json
-buildkite-agent artifact upload plan.json
-
 # Export plan vars into the current shell so pipeline upload can substitute them
 export BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER
 export BUILDKITE_TEST_ENGINE_PARALLELISM
 BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER')
 BUILDKITE_TEST_ENGINE_PARALLELISM=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PARALLELISM')
+
+# Fetch the full bin-packing plan and upload as an artifact
+curl --silent --fail \
+  --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
+  "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan?identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}&job_retry_count=0" \
+  | jq '.' > bin-packing-plan.json
+buildkite-agent artifact upload bin-packing-plan.json
 
 buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
