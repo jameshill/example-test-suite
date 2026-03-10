@@ -26,10 +26,15 @@ BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TE
 BUILDKITE_TEST_ENGINE_PARALLELISM=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PARALLELISM')
 
 # Fetch the full bin-packing plan and upload as an artifact
-curl --silent --fail \
-  --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
-  "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan?identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}&job_retry_count=0" \
-  | jq '.' > bin-packing-plan.json
-buildkite-agent artifact upload bin-packing-plan.json
+# Only possible when bktec successfully created a server-side plan (not a fallback)
+if [[ -n "$BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER" ]]; then
+  curl --silent --fail \
+    --header "Authorization: Bearer ${BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN}" \
+    "https://api.buildkite.com/v2/analytics/organizations/${BUILDKITE_ORGANIZATION_SLUG}/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}/test_plan?identifier=${BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER}&job_retry_count=0" \
+    | jq '.' > bin-packing-plan.json
+  buildkite-agent artifact upload bin-packing-plan.json
+else
+  echo "Skipping bin-packing plan artifact: bktec fell back to non-intelligent splitting"
+fi
 
 buildkite-agent pipeline upload .buildkite/dynamic-parallel-template.yml
