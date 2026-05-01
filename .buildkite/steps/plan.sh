@@ -4,12 +4,10 @@ set -e
 
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 
-DOCKERFILE=${DOCKERFILE:-Dockerfile}
-docker build -f $DOCKERFILE -t app --load .
-
-# Extract bktec from the Docker image to run natively for pipeline planning
+# Extract bktec directly from the official image — avoids building the full app just for planning
+BKTEC_IMAGE=$(grep 'COPY --from=buildkite/test-engine-client' Dockerfile | sed 's/.*--from=\([^ ]*\).*/\1/')
 BKTEC=$(mktemp)
-docker create --name bktec-extract app
+docker create --name bktec-extract "$BKTEC_IMAGE"
 docker cp bktec-extract:/usr/local/bin/bktec "$BKTEC"
 docker rm bktec-extract
 chmod +x "$BKTEC"
