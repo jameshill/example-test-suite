@@ -2,14 +2,6 @@
 
 set -e
 
-SUITE_URL="https://buildkite.com/organizations/${BUILDKITE_ORGANIZATION_SLUG}/analytics/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
-export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent oidc request-token --audience "$SUITE_URL" --lifetime 300)
-if [[ -n "$BUILDKITE_ANALYTICS_TOKEN" ]]; then
-  echo "OIDC token fetched successfully for audience: ${SUITE_URL}"
-else
-  echo "ERROR: Failed to fetch OIDC token for audience: ${SUITE_URL}" >&2
-  exit 1
-fi
 export BUILDKITE_TEST_ENGINE_API_ACCESS_TOKEN=$(buildkite-agent secret get API_ACCESS_TOKEN)
 export BUILDKITE_TEST_ENGINE_RETRY_COUNT=${RETRYCOUNT:-1}
 
@@ -23,6 +15,16 @@ else
 fi
 
 docker build -f $DOCKERFILE -t app --load .
+
+# Fetch the OIDC token after the Docker build so it doesn't expire before the collector uploads
+SUITE_URL="https://buildkite.com/organizations/${BUILDKITE_ORGANIZATION_SLUG}/analytics/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
+export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent oidc request-token --audience "$SUITE_URL" --lifetime 300)
+if [[ -n "$BUILDKITE_ANALYTICS_TOKEN" ]]; then
+  echo "OIDC token fetched successfully for audience: ${SUITE_URL}"
+else
+  echo "ERROR: Failed to fetch OIDC token for audience: ${SUITE_URL}" >&2
+  exit 1
+fi
 
 echo "+++ bktec"
 docker run \
