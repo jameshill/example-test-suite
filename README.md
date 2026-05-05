@@ -95,6 +95,6 @@ The `TESTOWNERS` file maps glob patterns to team slugs. Flaky tests detected by 
 
 ## Docker
 
-`Dockerfile` builds a Ruby 3.3 Alpine image that bundles `bktec` (from `buildkite/test-engine-client:v2.2.0`) and the `buildkite-test-collector` gem. `Dockerfile.v1.1` is an alternative version for testing upgrades; set `DOCKERFILE=Dockerfile.v1.1` on a step to use it.
+`Dockerfile` builds a Ruby 3.3 Alpine image that bundles `bktec` (from `buildkite/test-engine-client:v2.4.0`) and the `buildkite-test-collector` gem. `Dockerfile.v1.1` is an alternative version for testing upgrades; set `DOCKERFILE=Dockerfile.v1.1` on a step to use it.
 
 The plan steps do **not** build the full app image — they pull just the `buildkite/test-engine-client` image to extract `bktec`, which is significantly faster.
