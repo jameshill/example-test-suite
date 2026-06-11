@@ -34,6 +34,9 @@ steps:
   - label: ":rspec: Generate unit testing plan"
     command: .buildkite/steps/plan.sh
     key: unit_plan
+    # Opt out of the implicit dependency on the preceding block step so
+    # plan+select+run runs immediately rather than waiting on backfill.
+    depends_on: ~
     agents:
       queue: "default"
     env:
