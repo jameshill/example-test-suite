@@ -16,9 +16,16 @@ echo "+++ bktec plan"
 # Disable split-by-example for planning — file-level granularity is sufficient
 # for calculating parallelism, and the filter_tests endpoint it requires is unreliable
 unset BUILDKITE_TEST_ENGINE_SPLIT_BY_EXAMPLE
-PLAN_JSON=$("$BKTEC" plan --debug --json \
+
+# Request xgboost test selection. score_cutoff=0 ranks every candidate
+# rather than capping. bktec auto-collects git commit metadata when a
+# strategy is set; the diff base resolves to origin/main on this branch.
+# Preview-gated.
+PLAN_JSON=$(BKTEC_PREVIEW_SELECTION=1 "$BKTEC" plan --debug --json \
   --max-parallelism "${BKTEC_MAX_PARALLELISM}" \
-  --target-time "${BKTEC_TARGET_TIME:-2m}")
+  --target-time "${BKTEC_TARGET_TIME:-2m}" \
+  --selection-strategy xgboost \
+  --selection-param score_cutoff=0)
 
 echo "Plan JSON: $PLAN_JSON"
 echo "$PLAN_JSON" > plan.json
