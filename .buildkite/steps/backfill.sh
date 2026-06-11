@@ -31,8 +31,10 @@ echo "+++ :test_tube: bktec backfill-commit-metadata (upload)"
 echo "Org: ${BUILDKITE_ORGANIZATION_SLUG}, Suite: ${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
 
 # tools is a preview subcommand gated behind BKTEC_PREVIEW_SELECTION.
+# Default behaviour collects fresh metadata and uploads it; --upload is
+# only for re-uploading a pre-built tarball, and --output writes locally
+# instead of uploading. We want neither.
 BKTEC_PREVIEW_SELECTION=1 "$BKTEC" tools backfill-commit-metadata \
-  --upload \
   --days "${BACKFILL_DAYS:-90}"
 
 echo "Backfill upload complete."
