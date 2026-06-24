@@ -49,8 +49,14 @@ capture_plan() {
 
   # 1. Request the plan at --max-parallelism 1 so the whole selected set
   #    lands in tasks["0"], already in prediction-rank order.
+  #
+  # The per-request identifier override is BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER
+  # in this bktec version (cli.go binds cfg.Identifier to that env var, not
+  # BUILDKITE_TEST_ENGINE_IDENTIFIER as the doc states). The server keys
+  # plans by identifier, so a distinct value per cutoff is what makes each
+  # request a distinct plan rather than the same cached one re-fetched.
   local plan_json
-  plan_json=$(BUILDKITE_TEST_ENGINE_IDENTIFIER="${BUILDKITE_BUILD_ID}-${slug}" \
+  plan_json=$(BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER="${BUILDKITE_BUILD_ID}-${slug}" \
     BKTEC_PREVIEW_SELECTION=1 "$BKTEC" plan --json \
     --max-parallelism 1 \
     --selection-strategy xgboost \
