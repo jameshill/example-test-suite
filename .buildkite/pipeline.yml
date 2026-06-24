@@ -64,6 +64,11 @@ steps:
   # and therefore a distinct plan. The sweep is the score-cutoff trust
   # axis (count term neutralised) plus one count-cutoff sample.
   - group: ":mag: Capture plans for evaluation"
+    # Opt out of the implicit dependency on the preceding block step. A
+    # group inherits the implicit ordering on backfill_gate as a whole;
+    # depends_on: ~ on the inner steps alone does not lift it, so the
+    # gate must be cleared here on the group itself (as unit_plan does).
+    depends_on: ~
     steps:
       - &eval_capture
         label: ":mag: Capture sc0 (keep everything)"
