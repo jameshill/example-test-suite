@@ -54,20 +54,63 @@ steps:
   # Evaluation capture (docs/evaluating-test-prediction.md). Captures
   # predicted plans at chosen cutoffs as artifacts so they can be diffed
   # against the current plan offline. Isolated from the real plan+run
-  # branch above (own step, distinct identifiers) so it can never collide
-  # with the plan the tests actually run on.
-  - label: ":mag: Capture plans for evaluation"
-    command: .buildkite/steps/evaluate-capture.sh
-    key: eval_capture
-    depends_on: ~
-    agents:
-      queue: "default"
-    env:
-      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
-      # bktec plan validates these even though the capture never runs
-      # tests or reads results. Mirror the real plan step so the candidate
-      # set being evaluated matches what production would select.
-      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
-      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
-      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
-      BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+  # branch above so it can never collide with the plan the tests run on.
+  #
+  # ONE STEP PER CUTOFF. bktec keys each plan by an identifier defaulting
+  # to ${BUILDKITE_BUILD_ID}/${BUILDKITE_STEP_ID}, and overriding it was
+  # removed (test-engine-client PR #102). Multiple plan requests in one
+  # step share a step id, so the server returns the same cached plan for
+  # every cutoff. A separate step per cutoff gives each a distinct step id
+  # and therefore a distinct plan. The sweep is the score-cutoff trust
+  # axis (count term neutralised) plus one count-cutoff sample.
+  - group: ":mag: Capture plans for evaluation"
+    steps:
+      - &eval_capture
+        label: ":mag: Capture sc0 (keep everything)"
+        command: .buildkite/steps/evaluate-capture.sh
+        depends_on: ~
+        agents:
+          queue: "default"
+        env: &eval_capture_env
+          EVAL_SCORE_CUTOFF: "0"
+          EVAL_COUNT_CUTOFF: "0"
+          EVAL_SLUG: "sc0"
+          BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
+          # bktec plan validates these even though the capture never runs
+          # tests or reads results. Mirror the real plan step so the
+          # candidate set being evaluated matches production selection.
+          BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+          BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+          BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
+
+      - <<: *eval_capture
+        label: ":mag: Capture sc0.5"
+        env:
+          <<: *eval_capture_env
+          EVAL_SCORE_CUTOFF: "0.5"
+          EVAL_SLUG: "sc0.5"
+
+      - <<: *eval_capture
+        label: ":mag: Capture sc0.8"
+        env:
+          <<: *eval_capture_env
+          EVAL_SCORE_CUTOFF: "0.8"
+          EVAL_SLUG: "sc0.8"
+
+      - <<: *eval_capture
+        label: ":mag: Capture sc0.9"
+        env:
+          <<: *eval_capture_env
+          EVAL_SCORE_CUTOFF: "0.9"
+          EVAL_SLUG: "sc0.9"
+
+      # Count-cutoff sample: score_cutoff=1 so only the count term applies
+      # and the set is the top N by rank.
+      - <<: *eval_capture
+        label: ":mag: Capture cc50 (top 50 by rank)"
+        env:
+          <<: *eval_capture_env
+          EVAL_SCORE_CUTOFF: "1"
+          EVAL_COUNT_CUTOFF: "50"
+          EVAL_SLUG: "cc50"
