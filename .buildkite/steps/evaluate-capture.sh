@@ -66,6 +66,10 @@ capture_plan() {
     return 0
   fi
 
+  # Echo the server-returned identifier so distinct cutoffs can be
+  # confirmed to produce distinct plans (not the same plan re-fetched).
+  echo "Plan identifier (${slug}): ${identifier}"
+
   # 2. Mint a short-lived suite-scoped token for the REST fetch.
   local token
   token=$(buildkite-agent oidc request-token --audience "$OIDC_AUDIENCE" --lifetime 300)
