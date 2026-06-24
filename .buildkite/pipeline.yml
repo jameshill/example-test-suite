@@ -64,3 +64,10 @@ steps:
       queue: "default"
     env:
       BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
+      # bktec plan validates these even though the capture never runs
+      # tests or reads results. Mirror the real plan step so the candidate
+      # set being evaluated matches what production would select.
+      BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+      BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
+      BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
