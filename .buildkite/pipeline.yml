@@ -50,3 +50,17 @@ steps:
       BUILDKITE_TEST_ENGINE_RETRY_COUNT: 1
       BUILDKITE_TEST_ENGINE_RESULT_PATH: "tmp/result.json"
       BUILDKITE_TEST_ENGINE_TEST_RUNNER: rspec
+
+  # Evaluation capture (docs/evaluating-test-prediction.md). Captures
+  # predicted plans at chosen cutoffs as artifacts so they can be diffed
+  # against the current plan offline. Isolated from the real plan+run
+  # branch above (own step, distinct identifiers) so it can never collide
+  # with the plan the tests actually run on.
+  - label: ":mag: Capture plans for evaluation"
+    command: .buildkite/steps/evaluate-capture.sh
+    key: eval_capture
+    depends_on: ~
+    agents:
+      queue: "default"
+    env:
+      BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
