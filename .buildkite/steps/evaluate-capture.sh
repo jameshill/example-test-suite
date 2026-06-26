@@ -53,11 +53,19 @@ echo "+++ Capture: score_cutoff=${EVAL_SCORE_CUTOFF} count_cutoff=${EVAL_COUNT_C
 #    lands in tasks["0"], already in prediction-rank order. The identifier
 #    is bktec's default (${BUILDKITE_BUILD_ID}/${BUILDKITE_STEP_ID}); it is
 #    distinct from other cutoffs only because each runs in its own step.
+#
+#    include_scores=true opts the plan into the customer-facing
+#    `selection.scores` ranking (server PR #30600 / TE-6205): one row per
+#    candidate as { file_path, prediction_score }, sorted descending. This
+#    lets a single score_cutoff=0 capture be re-thresholded offline rather
+#    than needing a separate capture per cutoff. The flag rides on the open
+#    `selection.params` map, so no bktec change is needed.
 PLAN_JSON=$(BKTEC_PREVIEW_SELECTION=1 "$BKTEC" plan --json \
   --max-parallelism 1 \
   --selection-strategy xgboost \
   --selection-param "score_cutoff=${EVAL_SCORE_CUTOFF}" \
-  --selection-param "count_cutoff=${EVAL_COUNT_CUTOFF}")
+  --selection-param "count_cutoff=${EVAL_COUNT_CUTOFF}" \
+  --selection-param "include_scores=true")
 
 echo "$PLAN_JSON" > "$PLAN_FILE"
 IDENTIFIER=$(echo "$PLAN_JSON" | jq -r '.BUILDKITE_TEST_ENGINE_PLAN_IDENTIFIER')
