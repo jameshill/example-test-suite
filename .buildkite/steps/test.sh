@@ -15,9 +15,18 @@ fi
 
 docker build -f $DOCKERFILE -t app --load .
 
-# Fetch the OIDC token after the Docker build so it doesn't expire before the collector uploads
-SUITE_URL="https://buildkite.com/organizations/${BUILDKITE_ORGANIZATION_SLUG}/analytics/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
-export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent oidc request-token --audience "$SUITE_URL" --lifetime 300)
+# Analytics ingestion token.
+# The not-optimised pipeline sets USE_SUITE_TOKEN=true to use the static suite
+# analytics token (older bktec / collector-gem path doesn't accept OIDC JWTs).
+# Everything else uses a short-lived OIDC token fetched after the Docker build
+# so it doesn't expire before the collector uploads.
+if [ "${USE_SUITE_TOKEN}" == "true" ]; then
+  echo "Using static SUITE_TOKEN for analytics ingestion"
+  export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent secret get SUITE_TOKEN)
+else
+  SUITE_URL="https://buildkite.com/organizations/${BUILDKITE_ORGANIZATION_SLUG}/analytics/suites/${BUILDKITE_TEST_ENGINE_SUITE_SLUG}"
+  export BUILDKITE_ANALYTICS_TOKEN=$(buildkite-agent oidc request-token --audience "$SUITE_URL" --lifetime 300)
+fi
 
 echo "+++ bktec"
 docker run \
