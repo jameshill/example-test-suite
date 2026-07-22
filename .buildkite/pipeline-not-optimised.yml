@@ -42,6 +42,8 @@ steps:
       queue: "default"
     parallelism: 5
     env:
+      DOCKERFILE: "Dockerfile.v1.1"
+      USE_SUITE_TOKEN: "true"
       BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
       BUILDKITE_TEST_ENGINE_TEST_FILE_EXCLUDE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
       BUILDKITE_TEST_ENGINE_SUITE_SLUG: "rspec"
@@ -56,6 +58,8 @@ steps:
       queue: "default"
     parallelism: 10
     env:
+      DOCKERFILE: "Dockerfile.v1.1"
+      USE_SUITE_TOKEN: "true"
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
       BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
       BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
@@ -70,6 +74,8 @@ steps:
       queue: "default"
     parallelism: 10
     env:
+      DOCKERFILE: "Dockerfile.v1.1"
+      USE_SUITE_TOKEN: "true"
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
       BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
       BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
@@ -84,6 +90,8 @@ steps:
       queue: "default"
     parallelism: 10
     env:
+      DOCKERFILE: "Dockerfile.v1.1"
+      USE_SUITE_TOKEN: "true"
       BUILDKITE_TEST_ENGINE_TEST_FILE_PATTERN: "spec/{acceptance,features}/**/*_spec.rb"
       BUILDKITE_TEST_ENGINE_SUITE_SLUG: "feature-tests"
       BUILDKITE_TEST_ENGINE_TEST_CMD: "bundle exec rspec {{testExamples}} --format progress --format json --out tmp/result.json"
